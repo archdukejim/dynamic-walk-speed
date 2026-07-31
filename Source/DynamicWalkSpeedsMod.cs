@@ -12,7 +12,7 @@ namespace DynamicWalkSpeeds
         public DynamicWalkSpeedsMod(ModContentPack content) : base(content)
         {
             settings = GetSettings<DynamicWalkSpeedsSettings>();
-            Harmony harmony = new Harmony("RimSynapse.DynamicWalkSpeeds");
+            Harmony harmony = new Harmony("archdukejim.DynamicWalkSpeeds");
             harmony.PatchAll();
         }
 
