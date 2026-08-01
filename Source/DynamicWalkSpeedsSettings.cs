@@ -23,6 +23,12 @@ namespace DynamicWalkSpeeds
         public bool activeHostilePawnsTrigger = true;
         public float hostileTerritoryMultiplier = 0.90f;
 
+        public bool enableCreatureModifiers = true;
+        public Dictionary<string, float> creatureTraction = new Dictionary<string, float>();
+        public Dictionary<string, float> creatureSpeed = new Dictionary<string, float>();
+        public Dictionary<string, float> raceTractionOverrides = new Dictionary<string, float>();
+        public Dictionary<string, float> raceSpeedOverrides = new Dictionary<string, float>();
+
         public override void ExposeData()
         {
             base.ExposeData();
@@ -44,8 +50,18 @@ namespace DynamicWalkSpeeds
             Scribe_Values.Look(ref activeHostilePawnsTrigger, "activeHostilePawnsTrigger", true);
             Scribe_Values.Look(ref hostileTerritoryMultiplier, "hostileTerritoryMultiplier", 0.90f);
 
+            Scribe_Values.Look(ref enableCreatureModifiers, "enableCreatureModifiers", true);
+            Scribe_Collections.Look(ref creatureTraction, "creatureTraction", LookMode.Value, LookMode.Value);
+            Scribe_Collections.Look(ref creatureSpeed, "creatureSpeed", LookMode.Value, LookMode.Value);
+            Scribe_Collections.Look(ref raceTractionOverrides, "raceTractionOverrides", LookMode.Value, LookMode.Value);
+            Scribe_Collections.Look(ref raceSpeedOverrides, "raceSpeedOverrides", LookMode.Value, LookMode.Value);
+
             if (weatherMultipliers == null) weatherMultipliers = new Dictionary<string, float>();
             if (floorMultipliers == null) floorMultipliers = new Dictionary<string, float>();
+            if (creatureTraction == null) creatureTraction = new Dictionary<string, float>();
+            if (creatureSpeed == null) creatureSpeed = new Dictionary<string, float>();
+            if (raceTractionOverrides == null) raceTractionOverrides = new Dictionary<string, float>();
+            if (raceSpeedOverrides == null) raceSpeedOverrides = new Dictionary<string, float>();
         }
     }
 }

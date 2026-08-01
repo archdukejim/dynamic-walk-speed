@@ -3,7 +3,7 @@
   <name>Dynamic Walk Speeds</name>
   <author>archdukejim</author>
   <packageId>archdukejim.DynamicWalkSpeeds</packageId>
-  <modVersion>1.0.0</modVersion>
+  <modVersion>1.1.0</modVersion>
   <supportedVersions>
     <li>1.6</li>
   </supportedVersions>
@@ -14,7 +14,9 @@
   </loadAfter>
   <description>Ground your colonists actually walk on now decides how fast they cross it. A swept concrete corridor moves them faster than bare dirt, a blizzard drags at them, knee deep snow and a floor of filth slow them to a trudge, and being on hostile ground puts an edge in every step.
 
-Four modifiers are read for each cell a pawn steps into and multiplied together, so a paved hallway in the rain is still faster than mud in the rain. Above 1.00x is faster than vanilla, below is slower. Everything is a slider, everything defaults to something sane, and any of the four can be switched off on its own.
+And the floor does not treat every creature the same. A booted colonist gets everything a paved corridor has to offer. A hoofed animal slips on it, and a small clawed prey animal that evolved digging into soil gets nothing from it at all, because there is nothing there for its nails to grip.
+
+Five modifiers are read for each cell a pawn steps into and multiplied together, so a paved hallway in the rain is still faster than mud in the rain. Above 1.00x is faster than vanilla, below is slower. Everything is a slider, everything defaults to something sane, and any of the five can be switched off on its own.
 
 --- WEATHER ---
 Every weather in the game gets its own multiplier, from 0.50x to 1.50x, and the mod fills the list in for you from what that weather actually does. Rain costs 10 percent at full rate, snowfall costs 15 percent, so drizzle barely registers and a full blizzard bites. Modded weather is picked up automatically and given the same treatment.
@@ -24,6 +26,17 @@ Every terrain gets a multiplier from 0.50x to 2.00x. Manufactured ground starts 
 
 Master Floor Scale moves every floor at once from 0.50x to 2.00x, so you can keep the relative ranking and dial the whole system up or down. Unlink it if you would rather tune floors one at a time.
 
+--- CREATURE TRACTION ---
+Traction decides how much of the floor bonus a creature can actually use. At 1.00x it takes the whole thing. At 0.00x flooring does nothing for it either way. Below zero the bonus inverts and the floor becomes a penalty, so the 1.15x paved tile that speeds up your colonists reads as 0.89x to a guinea pig. Natural ground is never touched by traction, so nothing here changes how anything crosses dirt or grass.
+
+Creatures are grouped by the game's own data rather than by a hand written species list, on two axes at once. Body type comes from the race's body: Hoofed, Padded, Taloned, Insectoid, Shelled, Serpentine, Mechanoid, Humanlike, Other. Size band comes from base body size: Small under 0.5, Medium under 1.5, Large above. That is 18 populated groups across the base game and all DLCs, and it is what separates a 0.2 guinea pig from a 4.0 bear when the game calls both of them paws.
+
+Hooves slip on smooth flooring and slip harder the heavier the animal. Small padded animals fare worst of all, since claws that are built to dig into soil find nothing to bite on tile. Mechanoids do better on flat manufactured ground than on broken earth. Humanlike pawns are wearing boots and take the full bonus.
+
+Every group also has a flat speed multiplier from 0.25x to 2.00x that applies everywhere, not only on flooring, for when you want a species faster or slower across the board.
+
+Because the grouping is read from race data, modded animals are classified automatically. Any individual creature can still be ticked open and given its own traction and speed, which overrides its group. A cat and a guinea pig both land in Padded Small, so if you want the cat to keep its footing indoors, override the cat.
+
 --- SNOW AND FILTH ---
 Snow is charged by depth, so a light dusting is nothing and a drift is punishing. Filth is charged per pile in the cell, which means an unswept workshop or a corridor tracked through with mud genuinely costs you time and gives your cleaners something to earn. Together they can take a cell down to 0.30x at worst, never above 1.00x. Each has its own impact scale from 0x to 3x, so you can turn snow off and leave filth on, or make either one brutal.
 
@@ -31,14 +44,20 @@ Snow is charged by depth, so a light dusting is nothing and a drift is punishing
 Pawns move at 0.90x by default when the ground is not friendly, on a slider from 0.50x to 1.00x. Two things can trigger it: standing on a map tile owned by a faction hostile to you, or simply having a live enemy on the map. Linked, either one is enough. Unlink them and you can pick exactly which one counts, so you can have the penalty apply on enemy bases only and never during a raid on your own colony.
 
 --- SETTINGS ---
-Three tabs. Weather is a scrollable list of every weather in your game. Floors is the master scale plus a scrollable list of every terrain. Territory and Surface holds the snow and filth impact scales, the hostile multiplier and its two triggers. Every section has its own enable toggle, so you can run this as a floors only mod, or a weather only mod, and leave the rest at vanilla.
+Four tabs. Weather is a scrollable list of every weather in your game. Floors is the master scale plus a scrollable list of every terrain. Territory and Surface holds the snow and filth impact scales, the hostile multiplier and its two triggers. Creatures holds the traction and speed sliders for each populated group, with an optional per creature override list underneath. Every section has its own enable toggle, so you can run this as a floors only mod, or a traction only mod, and leave the rest at vanilla.
 
 --- COMPATIBILITY ---
 Works with Combat Extended. CE changes the move speed stat through encumbrance and bulk, while this mod changes what a cell costs to enter, so the two stack cleanly instead of fighting over the same value. No patch or load order rule is needed, though this mod is set to load after CE anyway.
 
-Safe to add or remove mid save. Nothing is stored on your pawns or your map, so removing the mod puts every speed straight back to vanilla. Modded weather and modded floors are read from the game's own lists and need no compatibility patch. Applies to every pawn that walks, your colonists and animals as much as the raiders coming at them.
+Safe to add or remove mid save. Nothing is stored on your pawns or your map, so removing the mod puts every speed straight back to vanilla. Modded weather, modded floors and modded animals are all read from the game's own defs and need no compatibility patch.
 
 --- CHANGE LOG ---
+1.1
+  - Creature traction: how much of the floor bonus a creature can use, from full benefit down through indifference to an outright penalty.
+  - Creatures grouped by body type and size band, read from race data, so modded animals classify themselves.
+  - Flat per group speed multiplier for adjustments that should apply off the flooring too.
+  - Any individual creature can override its group.
+
 1.0
   - Per weather speed multipliers, seeded from each weather's own rain and snow rate.
   - Per terrain speed multipliers, with manufactured ground faster than natural by default.

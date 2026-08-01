@@ -20,6 +20,7 @@ Four modifiers are read per cell and [b]multiplied together[/b], so a paved hall
 [list]
 [*][b]Weather[/b] - drizzle barely registers, a blizzard drags.
 [*][b]Floors[/b] - the corridor you paved is now worth paving.
+[*][b]Creature traction[/b] - and that paved corridor is worth nothing to a guinea pig.
 [*][b]Snow and filth[/b] - charged by depth and by the pile.
 [*][b]Hostile territory[/b] - enemy ground puts an edge in every step.
 [/list]
@@ -33,6 +34,41 @@ Every weather in your game gets its own multiplier from [b]0.50x to 1.50x[/b], a
 Every terrain gets a multiplier from [b]0.50x to 2.00x[/b]. Manufactured ground starts at [b]1.15x[/b] and natural ground at [b]1.00x[/b], which finally gives you a reason to floor a hallway that is not just beauty and cleanliness. Anything you built, anything that needed research, and anything smoothed counts as manufactured, so modded floors are picked up without a patch.
 
 [b]Master Floor Scale[/b] moves every floor at once from 0.50x to 2.00x. Keep it linked to preserve the ranking while dialling the whole system up or down, or unlink it and tune floors one at a time.
+
+[h2]Creature traction[/h2]
+
+A booted colonist gets everything a paved corridor has to offer. A horse slips on it. A guinea pig, an animal that spent its entire evolutionary history digging its nails into soil, gets nothing from it at all, because there is nothing on a smooth tile for those nails to grip.
+
+[b]Traction[/b] decides how much of the floor bonus a creature can actually use:
+
+[list]
+[*][b]1.00x[/b] - takes the full floor bonus. Colonists, boots on.
+[*][b]0.00x[/b] - flooring does nothing for this creature either way.
+[*][b]Below zero[/b] - the bonus inverts and the floor becomes a penalty. Your 1.15x paved tile reads as [b]0.89x[/b] to a guinea pig.
+[/list]
+
+Natural ground is never touched by traction, so nothing here changes how anything crosses dirt or grass. This is strictly about what you built.
+
+[h3]Grouped by the game's own data[/h3]
+
+No hand written species list to go stale. Creatures are classified on two axes at once, both read straight off the race:
+
+[list]
+[*][b]Body type[/b] from race.body - Hoofed, Padded, Taloned, Insectoid, Shelled, Serpentine, Mechanoid, Humanlike, Other.
+[*][b]Size band[/b] from base body size - Small under 0.5, Medium under 1.5, Large above.
+[/list]
+
+That comes out at [b]18 populated groups[/b] across the base game and all DLCs, and the size axis is what earns its keep: the game calls a 0.2 guinea pig and a 4.0 bear both "paws". Only one of them should be sliding around your kitchen.
+
+Hooves slip on smooth flooring and slip harder the heavier the animal. Small padded animals fare worst of anything alive. Mechanoids prefer flat manufactured ground to broken earth and are the only group that gets [i]more[/i] than a colonist does.
+
+[h3]Per creature overrides[/h3]
+
+Because the grouping is read from race data, [b]modded animals classify themselves[/b] with no patch. And any individual creature can be ticked open and given its own traction and speed, overriding whatever its group says. Worth knowing: a cat and a guinea pig both land in Padded Small. If you think a cat should keep its footing indoors, override the cat.
+
+[h3]Flat speed[/h3]
+
+Every group also carries a plain speed multiplier from [b]0.25x to 2.00x[/b] that applies everywhere, not just on flooring, for when a species should simply be quicker or slower across the board.
 
 [h2]Snow and filth[/h2]
 
@@ -59,9 +95,10 @@ Three tabs, everything live, nothing requiring a restart.
 [*][b]Weather[/b] - a scrollable list of every weather in your game.
 [*][b]Floors[/b] - the master scale plus a scrollable list of every terrain.
 [*][b]Territory and Surface[/b] - snow and filth impact scales, the hostile multiplier, and its two triggers.
+[*][b]Creatures[/b] - traction and speed per group, with an optional per creature override list underneath.
 [/list]
 
-Every section has its own enable toggle, so this happily runs as a floors only mod, or a weather only mod, with the rest left at vanilla.
+Every section has its own enable toggle, so this happily runs as a floors only mod, or a traction only mod, with the rest left at vanilla.
 
 [h2]Compatibility[/h2]
 
@@ -69,12 +106,20 @@ Every section has its own enable toggle, so this happily runs as a floors only m
 [*][b]RimWorld 1.6.[/b]
 [*][b]Combat Extended: yes.[/b] CE changes the move speed [i]stat[/i] through encumbrance and bulk. This mod changes what a [i]cell[/i] costs to enter. They are separate layers and stack cleanly rather than fighting over the same value, so a heavily loaded CE pawn crossing snow is slowed by both, correctly, once each. No patch and no load order rule is needed, though this mod declares itself to load after CE regardless.
 [*][b]Safe to add or remove mid save.[/b] Nothing is written to your pawns or your map. Remove it and every speed goes straight back to vanilla.
-[*][b]Modded weather and floors work out of the box.[/b] Both lists are read from the game's own defs, so anything another mod adds shows up in settings with a sensible starting value.
-[*][b]Applies to everything that walks[/b] - your colonists and animals as much as the raiders coming at them. Flooring your base is an advantage on defence; so is leaving the approach unpaved.
+[*][b]Modded weather, floors and animals work out of the box.[/b] All three lists are read from the game's own defs, so anything another mod adds shows up in settings with a sensible starting value, and a modded animal is classified by its body and size like everything else.
+[*][b]Applies to everything that walks[/b] - your colonists and animals as much as the raiders coming at them. Flooring your base is an advantage on defence; so is leaving the approach unpaved. With traction on, a paved killbox is now worth rather less to the hoofed things running down it.
 [*][b]One patch, one method.[/b] The mod postfixes the per cell move cost and touches nothing else, which keeps it out of the way of mods that work on stats, pathfinding, or terrain generation.
 [/list]
 
 [h2]Change log[/h2]
+
+[b]1.1[/b]
+[list]
+[*]Creature traction: how much of the floor bonus a creature can use, from full benefit through indifference to an outright penalty.
+[*]Creatures grouped by body type and size band, read from race data, so modded animals classify themselves.
+[*]Flat per group speed multiplier for adjustments that should apply off the flooring too.
+[*]Any individual creature can override its group.
+[/list]
 
 [b]1.0[/b]
 [list]
