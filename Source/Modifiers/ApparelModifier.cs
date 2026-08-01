@@ -93,21 +93,94 @@ namespace DynamicWalkSpeeds.Modifiers
                 if (a == null || !CoversTractionSlot(a.def, settings))
                     continue;
 
-                float bonus = GetBaseTraction(a.def, settings);
-
-                if (settings.footwearQualityMatters && a.TryGetQuality(out QualityCategory quality))
-                    bonus *= GetQualityFactor(quality);
-
-                if (settings.footwearWearMatters && a.MaxHitPoints > 0)
-                {
-                    float condition = (float)a.HitPoints / a.MaxHitPoints;
-                    bonus *= UnityEngine.Mathf.Lerp(0.5f, 1.0f, UnityEngine.Mathf.Clamp01(condition));
-                }
-
-                total += bonus;
+                total += GetBaseTraction(a.def, settings) * GetConditionFactor(a, settings);
             }
 
             return total;
+        }
+
+        private static float GetConditionFactor(Apparel a, DynamicWalkSpeedsSettings settings)
+        {
+            float factor = 1f;
+
+            if (settings.footwearQualityMatters && a.TryGetQuality(out QualityCategory quality))
+                factor *= GetQualityFactor(quality);
+
+            if (settings.footwearWearMatters && a.MaxHitPoints > 0)
+            {
+                float condition = (float)a.HitPoints / a.MaxHitPoints;
+                factor *= UnityEngine.Mathf.Lerp(0.5f, 1.0f, UnityEngine.Mathf.Clamp01(condition));
+            }
+
+            return factor;
+        }
+
+        public static float GetBestCoverage(Pawn pawn, DynamicWalkSpeedsSettings settings)
+        {
+            Pawn_ApparelTracker tracker = pawn?.apparel;
+            if (tracker == null)
+                return -1f;
+
+            List<Apparel> worn = tracker.WornApparel;
+            if (worn == null)
+                return 0f;
+
+            float best = 0f;
+            for (int i = 0; i < worn.Count; i++)
+            {
+                Apparel a = worn[i];
+                if (a == null || !CoversTractionSlot(a.def, settings))
+                    continue;
+
+                float cover = settings.barefootQualityShields ? GetConditionFactor(a, settings) : 1f;
+                if (cover > best) best = cover;
+            }
+
+            return best;
+        }
+
+        public static float GetDefaultBarefootPenalty(TerrainDef terrain)
+        {
+            if (terrain == null) return 1.00f;
+
+            string n = terrain.defName;
+            if (n == null) return 1.00f;
+
+            if (n.Contains("Rough")) return 0.85f;
+            if (n.Contains("Gravel") || n.Contains("Scree") || n.Contains("Rubble")) return 0.88f;
+            if (n.Contains("Ice")) return 0.90f;
+            if (n.Contains("Asphalt")) return 0.92f;
+
+            return 1.00f;
+        }
+
+        public static float GetBarefootPenalty(TerrainDef terrain, DynamicWalkSpeedsSettings settings)
+        {
+            if (terrain == null) return 1.00f;
+
+            if (!settings.barefootPenalties.TryGetValue(terrain.defName, out float penalty))
+                penalty = GetDefaultBarefootPenalty(terrain);
+
+            return penalty;
+        }
+
+        public static float GetBarefootMultiplier(Pawn pawn, TerrainDef terrain, DynamicWalkSpeedsSettings settings)
+        {
+            if (pawn == null || terrain == null || !settings.enableBarefootPenalty)
+                return 1.0f;
+
+            float coverage = GetBestCoverage(pawn, settings);
+            if (coverage < 0f)
+                return 1.0f;
+
+            float penalty = GetBarefootPenalty(terrain, settings);
+            if (penalty >= 1.0f)
+                return 1.0f;
+
+            float shortfall = UnityEngine.Mathf.Clamp01(1f - coverage);
+            float scaled = (1f - penalty) * shortfall * settings.barefootPenaltyScale;
+
+            return UnityEngine.Mathf.Clamp(1f - scaled, 0.1f, 1.0f);
         }
     }
 }

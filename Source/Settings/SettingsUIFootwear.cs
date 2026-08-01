@@ -12,6 +12,18 @@ namespace DynamicWalkSpeeds.Settings
         private static List<BodyPartGroupDef> apparelGroups;
         private static List<ThingDef> matching;
         private static string matchingKey;
+        private static List<TerrainDef> penaltyTerrains;
+        private static bool showTerrainPenalties;
+
+        private static void BuildTerrainList()
+        {
+            if (penaltyTerrains != null) return;
+
+            penaltyTerrains = DefDatabase<TerrainDef>.AllDefsListForReading
+                .OrderByDescending(t => 1f - ApparelModifier.GetDefaultBarefootPenalty(t))
+                .ThenBy(t => t.label)
+                .ToList();
+        }
 
         private static void BuildGroupList()
         {
@@ -48,8 +60,28 @@ namespace DynamicWalkSpeeds.Settings
         {
             BuildGroupList();
 
+            listing.CheckboxLabeled("Enable Barefoot Terrain Penalties", ref settings.enableBarefootPenalty,
+                "A pawn that could wear footwear but is not slows down on ground that hurts to walk on. Animals are never penalised.");
+            if (settings.enableBarefootPenalty)
+            {
+                settings.barefootPenaltyScale = listing.SliderLabeled(
+                    $"Barefoot Penalty Impact ({settings.barefootPenaltyScale:F2}x)", settings.barefootPenaltyScale, 0f, 3f);
+                listing.CheckboxLabeled("Footwear Quality Shields", ref settings.barefootQualityShields,
+                    "Awful footwear only shields half the penalty. Off means any footwear shields it completely.");
+                listing.CheckboxLabeled("Edit penalties per terrain", ref showTerrainPenalties);
+            }
+
+            listing.GapLine(8f);
+
             listing.CheckboxLabeled("Enable Footwear Traction", ref settings.enableFootwearTraction,
                 "Worn apparel covering the chosen body part groups adds to a pawn's traction, so flooring pays off more for a shod pawn.");
+
+            if (showTerrainPenalties && settings.enableBarefootPenalty)
+            {
+                DrawTerrainPenalties(listing, settings, inRect);
+                return;
+            }
+
             if (!settings.enableFootwearTraction) return;
 
             settings.footwearBaseTraction = listing.SliderLabeled(
@@ -116,6 +148,35 @@ namespace DynamicWalkSpeeds.Settings
                 }
                 settings.footwearTraction[d.defName] = scroll.SliderLabeled($"{d.LabelCap} ({val:F2}x)", val,
                     ApparelModifier.MinFootwearTraction, ApparelModifier.MaxFootwearTraction);
+            }
+
+            scroll.End();
+            Widgets.EndScrollView();
+        }
+
+        private static void DrawTerrainPenalties(Listing_Standard listing, DynamicWalkSpeedsSettings settings, Rect inRect)
+        {
+            BuildTerrainList();
+
+            listing.Gap(6f);
+            listing.Label("Barefoot speed on each terrain. 1.00x is no penalty. Rough stone and gravel lead the list.");
+
+            Rect outRect = listing.GetRect(inRect.height - listing.CurHeight - 40f);
+            Rect viewRect = new Rect(0f, 0f, outRect.width - 18f, penaltyTerrains.Count * 32f);
+
+            Widgets.BeginScrollView(outRect, ref scrollPosition, viewRect);
+            Listing_Standard scroll = new Listing_Standard();
+            scroll.Begin(viewRect);
+
+            for (int i = 0; i < penaltyTerrains.Count; i++)
+            {
+                TerrainDef t = penaltyTerrains[i];
+                if (!settings.barefootPenalties.TryGetValue(t.defName, out float val))
+                {
+                    val = ApparelModifier.GetDefaultBarefootPenalty(t);
+                    settings.barefootPenalties[t.defName] = val;
+                }
+                settings.barefootPenalties[t.defName] = scroll.SliderLabeled($"{t.LabelCap} ({val:F2}x)", val, 0.50f, 1.00f);
             }
 
             scroll.End();

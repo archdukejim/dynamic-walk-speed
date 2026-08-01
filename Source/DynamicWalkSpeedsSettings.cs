@@ -30,11 +30,16 @@ namespace DynamicWalkSpeeds
         public Dictionary<string, float> raceSpeedOverrides = new Dictionary<string, float>();
 
         public bool enableFootwearTraction = true;
-        public float footwearBaseTraction = 0.50f;
+        public float footwearBaseTraction = 0.25f;
         public bool footwearQualityMatters = true;
         public bool footwearWearMatters = false;
         public List<string> footwearBodyPartGroups = new List<string> { "Feet" };
         public Dictionary<string, float> footwearTraction = new Dictionary<string, float>();
+
+        public bool enableBarefootPenalty = true;
+        public float barefootPenaltyScale = 1.0f;
+        public bool barefootQualityShields = true;
+        public Dictionary<string, float> barefootPenalties = new Dictionary<string, float>();
 
         public override void ExposeData()
         {
@@ -64,11 +69,16 @@ namespace DynamicWalkSpeeds
             Scribe_Collections.Look(ref raceSpeedOverrides, "raceSpeedOverrides", LookMode.Value, LookMode.Value);
 
             Scribe_Values.Look(ref enableFootwearTraction, "enableFootwearTraction", true);
-            Scribe_Values.Look(ref footwearBaseTraction, "footwearBaseTraction", 0.50f);
+            Scribe_Values.Look(ref footwearBaseTraction, "footwearBaseTraction", 0.25f);
             Scribe_Values.Look(ref footwearQualityMatters, "footwearQualityMatters", true);
             Scribe_Values.Look(ref footwearWearMatters, "footwearWearMatters", false);
             Scribe_Collections.Look(ref footwearBodyPartGroups, "footwearBodyPartGroups", LookMode.Value);
             Scribe_Collections.Look(ref footwearTraction, "footwearTraction", LookMode.Value, LookMode.Value);
+
+            Scribe_Values.Look(ref enableBarefootPenalty, "enableBarefootPenalty", true);
+            Scribe_Values.Look(ref barefootPenaltyScale, "barefootPenaltyScale", 1.0f);
+            Scribe_Values.Look(ref barefootQualityShields, "barefootQualityShields", true);
+            Scribe_Collections.Look(ref barefootPenalties, "barefootPenalties", LookMode.Value, LookMode.Value);
 
             if (weatherMultipliers == null) weatherMultipliers = new Dictionary<string, float>();
             if (floorMultipliers == null) floorMultipliers = new Dictionary<string, float>();
@@ -77,6 +87,7 @@ namespace DynamicWalkSpeeds
             if (raceTractionOverrides == null) raceTractionOverrides = new Dictionary<string, float>();
             if (raceSpeedOverrides == null) raceSpeedOverrides = new Dictionary<string, float>();
             if (footwearTraction == null) footwearTraction = new Dictionary<string, float>();
+            if (barefootPenalties == null) barefootPenalties = new Dictionary<string, float>();
             if (footwearBodyPartGroups == null || footwearBodyPartGroups.Count == 0)
                 footwearBodyPartGroups = new List<string> { "Feet" };
         }

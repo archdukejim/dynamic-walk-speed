@@ -26,8 +26,9 @@ namespace DynamicWalkSpeeds.Patches
             float surfaceMult = SurfaceModifier.GetSurfaceMultiplier(map, c, settings);
             float territoryMult = TerritoryModifier.GetTerritoryMultiplier(pawn, settings);
             float creatureMult = CreatureModifier.GetSpeedMultiplier(pawn, settings);
+            float barefootMult = ApparelModifier.GetBarefootMultiplier(pawn, terrain, settings);
 
-            float totalSpeedMultiplier = weatherMult * floorMult * surfaceMult * territoryMult * creatureMult;
+            float totalSpeedMultiplier = weatherMult * floorMult * surfaceMult * territoryMult * creatureMult * barefootMult;
             if (totalSpeedMultiplier <= 0.01f)
                 totalSpeedMultiplier = 0.01f;
 
