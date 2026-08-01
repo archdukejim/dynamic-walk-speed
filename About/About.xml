@@ -3,8 +3,47 @@
   <name>Dynamic Walk Speeds</name>
   <author>archdukejim</author>
   <packageId>archdukejim.DynamicWalkSpeeds</packageId>
+  <modVersion>1.0.0</modVersion>
   <supportedVersions>
     <li>1.6</li>
   </supportedVersions>
-  <description>Dynamically adjusts pawn movement speeds based on weather conditions, filth, snow depth, tactical hostile territory, and manufactured terrain infrastructure.</description>
+  <url>https://steamcommunity.com/sharedfiles/filedetails/?id=3775191933</url>
+  <loadAfter>
+    <li>brrainz.harmony</li>
+    <li>CETeam.CombatExtended</li>
+  </loadAfter>
+  <description>Ground your colonists actually walk on now decides how fast they cross it. A swept concrete corridor moves them faster than bare dirt, a blizzard drags at them, knee deep snow and a floor of filth slow them to a trudge, and being on hostile ground puts an edge in every step.
+
+Four modifiers are read for each cell a pawn steps into and multiplied together, so a paved hallway in the rain is still faster than mud in the rain. Above 1.00x is faster than vanilla, below is slower. Everything is a slider, everything defaults to something sane, and any of the four can be switched off on its own.
+
+--- WEATHER ---
+Every weather in the game gets its own multiplier, from 0.50x to 1.50x, and the mod fills the list in for you from what that weather actually does. Rain costs 10 percent at full rate, snowfall costs 15 percent, so drizzle barely registers and a full blizzard bites. Modded weather is picked up automatically and given the same treatment.
+
+--- FLOORS ---
+Every terrain gets a multiplier from 0.50x to 2.00x. Manufactured ground starts at 1.15x, natural ground at 1.00x, so the reward for flooring a hallway is that people move down it faster. Anything you built, anything that needed research, and anything smoothed counts as manufactured, which picks up modded floors without a patch.
+
+Master Floor Scale moves every floor at once from 0.50x to 2.00x, so you can keep the relative ranking and dial the whole system up or down. Unlink it if you would rather tune floors one at a time.
+
+--- SNOW AND FILTH ---
+Snow is charged by depth, so a light dusting is nothing and a drift is punishing. Filth is charged per pile in the cell, which means an unswept workshop or a corridor tracked through with mud genuinely costs you time and gives your cleaners something to earn. Together they can take a cell down to 0.30x at worst, never above 1.00x. Each has its own impact scale from 0x to 3x, so you can turn snow off and leave filth on, or make either one brutal.
+
+--- HOSTILE TERRITORY ---
+Pawns move at 0.90x by default when the ground is not friendly, on a slider from 0.50x to 1.00x. Two things can trigger it: standing on a map tile owned by a faction hostile to you, or simply having a live enemy on the map. Linked, either one is enough. Unlink them and you can pick exactly which one counts, so you can have the penalty apply on enemy bases only and never during a raid on your own colony.
+
+--- SETTINGS ---
+Three tabs. Weather is a scrollable list of every weather in your game. Floors is the master scale plus a scrollable list of every terrain. Territory and Surface holds the snow and filth impact scales, the hostile multiplier and its two triggers. Every section has its own enable toggle, so you can run this as a floors only mod, or a weather only mod, and leave the rest at vanilla.
+
+--- COMPATIBILITY ---
+Works with Combat Extended. CE changes the move speed stat through encumbrance and bulk, while this mod changes what a cell costs to enter, so the two stack cleanly instead of fighting over the same value. No patch or load order rule is needed, though this mod is set to load after CE anyway.
+
+Safe to add or remove mid save. Nothing is stored on your pawns or your map, so removing the mod puts every speed straight back to vanilla. Modded weather and modded floors are read from the game's own lists and need no compatibility patch. Applies to every pawn that walks, your colonists and animals as much as the raiders coming at them.
+
+--- CHANGE LOG ---
+1.0
+  - Per weather speed multipliers, seeded from each weather's own rain and snow rate.
+  - Per terrain speed multipliers, with manufactured ground faster than natural by default.
+  - Master Floor Scale to move every floor at once.
+  - Snow slows by depth, filth slows by the pile.
+  - Hostile territory penalty, triggered by enemy owned tiles, live enemies, or both.
+  - Every modifier independently switchable, every value on a slider.</description>
 </ModMetaData>

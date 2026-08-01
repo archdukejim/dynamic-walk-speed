@@ -1,0 +1,91 @@
+Steam Workshop description for Dynamic Walk Speeds.
+Workshop item 3775191933 - https://steamcommunity.com/sharedfiles/filedetails/?id=3775191933
+
+Steam uses BBCode, not Markdown. Paste everything below the line into the
+Workshop item's description field.
+
+Upload About/Preview.png as the item's preview image. Workshop descriptions
+cannot reliably [img] an externally hosted file, so screenshots of the three
+settings tabs are worth adding as Workshop screenshots.
+--------------------------------------------------------------------------------
+
+[h1]Dynamic Walk Speeds[/h1]
+
+A colonist crossing a swept concrete corridor and a colonist wading through knee deep snow move at exactly the same speed in vanilla. This mod makes the ground answer for itself: [b]every cell a pawn steps into is priced by what is actually on it[/b] - the floor under them, the weather over them, the snow and filth in the way, and whether the ground belongs to somebody who wants them dead.
+
+[h2]How it works[/h2]
+
+Four modifiers are read per cell and [b]multiplied together[/b], so a paved hallway in the rain is still faster than mud in the rain. Above [b]1.00x[/b] is faster than vanilla, below it is slower. Every value is a slider and every modifier can be switched off on its own.
+
+[list]
+[*][b]Weather[/b] - drizzle barely registers, a blizzard drags.
+[*][b]Floors[/b] - the corridor you paved is now worth paving.
+[*][b]Snow and filth[/b] - charged by depth and by the pile.
+[*][b]Hostile territory[/b] - enemy ground puts an edge in every step.
+[/list]
+
+[h2]Weather[/h2]
+
+Every weather in your game gets its own multiplier from [b]0.50x to 1.50x[/b], and the list fills itself in from what that weather actually does: rain costs 10 percent at full rate, snowfall costs 15 percent. So a light shower is a rounding error and a full blizzard genuinely changes how your day runs. Modded weather is picked up automatically and seeded the same way.
+
+[h2]Floors[/h2]
+
+Every terrain gets a multiplier from [b]0.50x to 2.00x[/b]. Manufactured ground starts at [b]1.15x[/b] and natural ground at [b]1.00x[/b], which finally gives you a reason to floor a hallway that is not just beauty and cleanliness. Anything you built, anything that needed research, and anything smoothed counts as manufactured, so modded floors are picked up without a patch.
+
+[b]Master Floor Scale[/b] moves every floor at once from 0.50x to 2.00x. Keep it linked to preserve the ranking while dialling the whole system up or down, or unlink it and tune floors one at a time.
+
+[h2]Snow and filth[/h2]
+
+Snow is charged [b]by depth[/b], so a dusting is nothing and a drift is punishing. Filth is charged [b]per pile in the cell[/b], which means an unswept workshop or a corridor tracked through with mud costs you real time and gives your cleaners something to earn. Together they bottom out at [b]0.30x[/b] and never push above 1.00x.
+
+Each has its own impact scale from [b]0x to 3x[/b], so you can switch snow off and leave filth on, or make either one brutal.
+
+[h2]Hostile territory[/h2]
+
+Pawns move at [b]0.90x[/b] by default when the ground is not friendly, on a slider from 0.50x to 1.00x. Two things can trigger it:
+
+[list]
+[*][b]Hostile map tile[/b] - you are standing on ground owned by a faction hostile to you.
+[*][b]Live enemies present[/b] - anything hostile and still standing is on the map.
+[/list]
+
+Linked, either one is enough. Unlink them and you choose exactly which counts, so you can have the penalty bite when you assault an enemy base and never when a raid lands on your own doorstep.
+
+[h2]Settings[/h2]
+
+Three tabs, everything live, nothing requiring a restart.
+
+[list]
+[*][b]Weather[/b] - a scrollable list of every weather in your game.
+[*][b]Floors[/b] - the master scale plus a scrollable list of every terrain.
+[*][b]Territory and Surface[/b] - snow and filth impact scales, the hostile multiplier, and its two triggers.
+[/list]
+
+Every section has its own enable toggle, so this happily runs as a floors only mod, or a weather only mod, with the rest left at vanilla.
+
+[h2]Compatibility[/h2]
+
+[list]
+[*][b]RimWorld 1.6.[/b]
+[*][b]Combat Extended: yes.[/b] CE changes the move speed [i]stat[/i] through encumbrance and bulk. This mod changes what a [i]cell[/i] costs to enter. They are separate layers and stack cleanly rather than fighting over the same value, so a heavily loaded CE pawn crossing snow is slowed by both, correctly, once each. No patch and no load order rule is needed, though this mod declares itself to load after CE regardless.
+[*][b]Safe to add or remove mid save.[/b] Nothing is written to your pawns or your map. Remove it and every speed goes straight back to vanilla.
+[*][b]Modded weather and floors work out of the box.[/b] Both lists are read from the game's own defs, so anything another mod adds shows up in settings with a sensible starting value.
+[*][b]Applies to everything that walks[/b] - your colonists and animals as much as the raiders coming at them. Flooring your base is an advantage on defence; so is leaving the approach unpaved.
+[*][b]One patch, one method.[/b] The mod postfixes the per cell move cost and touches nothing else, which keeps it out of the way of mods that work on stats, pathfinding, or terrain generation.
+[/list]
+
+[h2]Change log[/h2]
+
+[b]1.0[/b]
+[list]
+[*]Per weather speed multipliers, seeded from each weather's own rain and snow rate.
+[*]Per terrain speed multipliers, with manufactured ground faster than natural by default.
+[*]Master Floor Scale to move every floor at once.
+[*]Snow slows by depth, filth slows by the pile.
+[*]Hostile territory penalty, triggered by enemy owned tiles, live enemies, or both.
+[*]Every modifier independently switchable, every value on a slider.
+[/list]
+
+[h2]Source[/h2]
+
+MIT licensed: https://github.com/archdukejim/dynamic-walk-speed
