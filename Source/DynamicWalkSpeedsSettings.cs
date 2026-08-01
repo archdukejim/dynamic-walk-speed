@@ -29,6 +29,13 @@ namespace DynamicWalkSpeeds
         public Dictionary<string, float> raceTractionOverrides = new Dictionary<string, float>();
         public Dictionary<string, float> raceSpeedOverrides = new Dictionary<string, float>();
 
+        public bool enableFootwearTraction = true;
+        public float footwearBaseTraction = 0.50f;
+        public bool footwearQualityMatters = true;
+        public bool footwearWearMatters = false;
+        public List<string> footwearBodyPartGroups = new List<string> { "Feet" };
+        public Dictionary<string, float> footwearTraction = new Dictionary<string, float>();
+
         public override void ExposeData()
         {
             base.ExposeData();
@@ -56,12 +63,22 @@ namespace DynamicWalkSpeeds
             Scribe_Collections.Look(ref raceTractionOverrides, "raceTractionOverrides", LookMode.Value, LookMode.Value);
             Scribe_Collections.Look(ref raceSpeedOverrides, "raceSpeedOverrides", LookMode.Value, LookMode.Value);
 
+            Scribe_Values.Look(ref enableFootwearTraction, "enableFootwearTraction", true);
+            Scribe_Values.Look(ref footwearBaseTraction, "footwearBaseTraction", 0.50f);
+            Scribe_Values.Look(ref footwearQualityMatters, "footwearQualityMatters", true);
+            Scribe_Values.Look(ref footwearWearMatters, "footwearWearMatters", false);
+            Scribe_Collections.Look(ref footwearBodyPartGroups, "footwearBodyPartGroups", LookMode.Value);
+            Scribe_Collections.Look(ref footwearTraction, "footwearTraction", LookMode.Value, LookMode.Value);
+
             if (weatherMultipliers == null) weatherMultipliers = new Dictionary<string, float>();
             if (floorMultipliers == null) floorMultipliers = new Dictionary<string, float>();
             if (creatureTraction == null) creatureTraction = new Dictionary<string, float>();
             if (creatureSpeed == null) creatureSpeed = new Dictionary<string, float>();
             if (raceTractionOverrides == null) raceTractionOverrides = new Dictionary<string, float>();
             if (raceSpeedOverrides == null) raceSpeedOverrides = new Dictionary<string, float>();
+            if (footwearTraction == null) footwearTraction = new Dictionary<string, float>();
+            if (footwearBodyPartGroups == null || footwearBodyPartGroups.Count == 0)
+                footwearBodyPartGroups = new List<string> { "Feet" };
         }
     }
 }

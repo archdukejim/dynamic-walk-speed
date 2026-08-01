@@ -70,6 +70,20 @@ Because the grouping is read from race data, [b]modded animals classify themselv
 
 Every group also carries a plain speed multiplier from [b]0.25x to 2.00x[/b] that applies everywhere, not just on flooring, for when a species should simply be quicker or slower across the board.
 
+[h2]Footwear[/h2]
+
+Shoes add grip. A barefoot colonist and a booted one should not get the same thing out of a paved corridor, so every item covering the traction slot adds to that pawn's traction, [b]0.50x per item[/b] by default.
+
+[b]And quality matters.[/b] Awful boots deliver half their traction, Legendary boots deliver 1.75x of it, on the usual seven step scale in between. Your masterwork cowboy boots are genuinely better footing than the awful pair the raider was wearing. There is also an optional [b]condition[/b] toggle, off by default, that scales grip down as the item wears out.
+
+[b]You choose what counts as the slot.[/b] The default is anything covering the [b]Feet[/b] body part group, which is what footwear mods use, but every body part group any apparel in your game touches is offered as a tick box. Decide that leg wear or a full body suit contributes and it will. Every individual item occupying the slot then gets its own slider, so an armoured boot and a soft moccasin need not be worth the same.
+
+Worth knowing up front: [b]vanilla RimWorld has no footwear[/b], so this tab sits idle until a mod adds some. [i]Vanilla Apparel Expanded[/i] is one that does.
+
+[h2]Vehicles[/h2]
+
+Vehicles from [b]Vehicle Framework[/b] are detected by type rather than by an assembly reference, so this mod neither requires it nor breaks without it. They get their own traction groups, banded by footprint instead of body size, defaulting to [b]1.50x[/b] - wheels and treads get more out of a paved road than boots ever will. Works the same with Vanilla Vehicles Expanded layered on top.
+
 [h2]Snow and filth[/h2]
 
 Snow is charged [b]by depth[/b], so a dusting is nothing and a drift is punishing. Filth is charged [b]per pile in the cell[/b], which means an unswept workshop or a corridor tracked through with mud costs you real time and gives your cleaners something to earn. Together they bottom out at [b]0.30x[/b] and never push above 1.00x.
@@ -96,6 +110,7 @@ Three tabs, everything live, nothing requiring a restart.
 [*][b]Floors[/b] - the master scale plus a scrollable list of every terrain.
 [*][b]Territory and Surface[/b] - snow and filth impact scales, the hostile multiplier, and its two triggers.
 [*][b]Creatures[/b] - traction and speed per group, with an optional per creature override list underneath.
+[*][b]Footwear[/b] - per item traction, the quality and condition toggles, and which body part groups count as a traction slot.
 [/list]
 
 Every section has its own enable toggle, so this happily runs as a floors only mod, or a traction only mod, with the rest left at vanilla.
@@ -106,12 +121,22 @@ Every section has its own enable toggle, so this happily runs as a floors only m
 [*][b]RimWorld 1.6.[/b]
 [*][b]Combat Extended: yes.[/b] CE changes the move speed [i]stat[/i] through encumbrance and bulk. This mod changes what a [i]cell[/i] costs to enter. They are separate layers and stack cleanly rather than fighting over the same value, so a heavily loaded CE pawn crossing snow is slowed by both, correctly, once each. No patch and no load order rule is needed, though this mod declares itself to load after CE regardless.
 [*][b]Safe to add or remove mid save.[/b] Nothing is written to your pawns or your map. Remove it and every speed goes straight back to vanilla.
-[*][b]Modded weather, floors and animals work out of the box.[/b] All three lists are read from the game's own defs, so anything another mod adds shows up in settings with a sensible starting value, and a modded animal is classified by its body and size like everything else.
+[*][b]Vehicle Framework: yes.[/b] Vehicles are detected by type rather than by an assembly reference, so the mod neither requires Vehicle Framework nor breaks without it. Where they do route through the vanilla move cost they get their own traction groups. Vanilla Vehicles Expanded rides along on the same handling.
+[*][b]Modded weather, floors, animals and apparel work out of the box.[/b] Every list is read from the game's own defs, so anything another mod adds shows up in settings with a sensible starting value. Animals classify by body name first and by the body's own parts as a fallback, so a mod shipping a custom body still lands in the right group.
 [*][b]Applies to everything that walks[/b] - your colonists and animals as much as the raiders coming at them. Flooring your base is an advantage on defence; so is leaving the approach unpaved. With traction on, a paved killbox is now worth rather less to the hoofed things running down it.
 [*][b]One patch, one method.[/b] The mod postfixes the per cell move cost and touches nothing else, which keeps it out of the way of mods that work on stats, pathfinding, or terrain generation.
 [/list]
 
 [h2]Change log[/h2]
+
+[b]1.2[/b]
+[list]
+[*]Footwear traction: boots and shoes add grip, and their quality scales how much.
+[*]Any body part group can be nominated as the traction slot, and every item occupying it gets its own value.
+[*]Optional condition scaling, so worn out footwear grips less.
+[*]Vehicle Framework vehicles detected and given their own traction groups, banded by footprint.
+[*]Custom animal bodies from mods now classify by their parts when the body name is unfamiliar.
+[/list]
 
 [b]1.1[/b]
 [list]

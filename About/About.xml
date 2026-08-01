@@ -3,7 +3,7 @@
   <name>Dynamic Walk Speeds</name>
   <author>archdukejim</author>
   <packageId>archdukejim.DynamicWalkSpeeds</packageId>
-  <modVersion>1.1.0</modVersion>
+  <modVersion>1.2.0</modVersion>
   <supportedVersions>
     <li>1.6</li>
   </supportedVersions>
@@ -35,7 +35,19 @@ Hooves slip on smooth flooring and slip harder the heavier the animal. Small pad
 
 Every group also has a flat speed multiplier from 0.25x to 2.00x that applies everywhere, not only on flooring, for when you want a species faster or slower across the board.
 
-Because the grouping is read from race data, modded animals are classified automatically. Any individual creature can still be ticked open and given its own traction and speed, which overrides its group. A cat and a guinea pig both land in Padded Small, so if you want the cat to keep its footing indoors, override the cat.
+Because the grouping is read from race data, modded animals are classified automatically. Classification tries the race's body name first, then falls back to reading the body's own parts, so a mod that ships a custom body still lands correctly if that body has hooves, paws, claws, a beak, a shell or plain feet in it. Any individual creature can still be ticked open and given its own traction and speed, which overrides its group. A cat and a guinea pig both land in Padded Small, so if you want the cat to keep its footing indoors, override the cat.
+
+--- FOOTWEAR ---
+Boots and shoes add traction, so a shod pawn gets more out of your flooring than a barefoot one. Each item covering the traction slot contributes a bonus that adds to the creature's own traction, with a default of 0.50x per item.
+
+Quality matters. Awful footwear delivers half its traction, Legendary delivers 1.75x of it, on the usual seven step scale between. Turn Quality Matters off and every pair works the same. There is also an optional Condition Matters toggle, off by default, that scales traction down to half as the item wears out.
+
+What counts as the traction slot is up to you. By default it is anything covering the Feet body part group, which is what footwear mods use, but every body part group used by any apparel in your game is offered as a tick box, so you can decide that leg wear or a full body suit contributes too. Every individual item that occupies the slot then gets its own slider, so an armoured boot and a soft moccasin need not be worth the same.
+
+Vanilla RimWorld has no footwear at all, so this section sits idle until a mod adds some. Vanilla Apparel Expanded is one that does.
+
+--- VEHICLES ---
+Vehicles from Vehicle Framework are detected without a hard dependency and get their own traction groups, banded by footprint rather than by body size, defaulting to 1.50x. Wheels and treads get more out of a paved road than boots ever will. If Vehicle Framework is not installed, or if it routes its vehicles around the vanilla move cost entirely, this simply never comes up.
 
 --- SNOW AND FILTH ---
 Snow is charged by depth, so a light dusting is nothing and a drift is punishing. Filth is charged per pile in the cell, which means an unswept workshop or a corridor tracked through with mud genuinely costs you time and gives your cleaners something to earn. Together they can take a cell down to 0.30x at worst, never above 1.00x. Each has its own impact scale from 0x to 3x, so you can turn snow off and leave filth on, or make either one brutal.
@@ -44,14 +56,23 @@ Snow is charged by depth, so a light dusting is nothing and a drift is punishing
 Pawns move at 0.90x by default when the ground is not friendly, on a slider from 0.50x to 1.00x. Two things can trigger it: standing on a map tile owned by a faction hostile to you, or simply having a live enemy on the map. Linked, either one is enough. Unlink them and you can pick exactly which one counts, so you can have the penalty apply on enemy bases only and never during a raid on your own colony.
 
 --- SETTINGS ---
-Four tabs. Weather is a scrollable list of every weather in your game. Floors is the master scale plus a scrollable list of every terrain. Territory and Surface holds the snow and filth impact scales, the hostile multiplier and its two triggers. Creatures holds the traction and speed sliders for each populated group, with an optional per creature override list underneath. Every section has its own enable toggle, so you can run this as a floors only mod, or a traction only mod, and leave the rest at vanilla.
+Five tabs. Weather is a scrollable list of every weather in your game. Floors is the master scale plus a scrollable list of every terrain. Territory and Surface holds the snow and filth impact scales, the hostile multiplier and its two triggers. Creatures holds the traction and speed sliders for each populated group, with an optional per creature override list underneath. Footwear holds the per item traction, the quality and condition toggles, and the choice of which body part groups count as a traction slot. Every section has its own enable toggle, so you can run this as a floors only mod, or a traction only mod, and leave the rest at vanilla.
 
 --- COMPATIBILITY ---
 Works with Combat Extended. CE changes the move speed stat through encumbrance and bulk, while this mod changes what a cell costs to enter, so the two stack cleanly instead of fighting over the same value. No patch or load order rule is needed, though this mod is set to load after CE anyway.
 
-Safe to add or remove mid save. Nothing is stored on your pawns or your map, so removing the mod puts every speed straight back to vanilla. Modded weather, modded floors and modded animals are all read from the game's own defs and need no compatibility patch.
+Works with Vehicle Framework, and with Vanilla Vehicles Expanded on top of it. Vehicles are detected by type rather than by an assembly reference, so this mod neither requires Vehicle Framework nor breaks without it.
+
+Safe to add or remove mid save. Nothing is stored on your pawns or your map, so removing the mod puts every speed straight back to vanilla. Modded weather, modded floors, modded animals and modded apparel are all read from the game's own defs and need no compatibility patch.
 
 --- CHANGE LOG ---
+1.2
+  - Footwear traction: boots and shoes add grip, and their quality scales how much.
+  - Any body part group can be nominated as the traction slot, and every item occupying it gets its own value.
+  - Optional condition scaling, so worn out footwear grips less.
+  - Vehicle Framework vehicles detected and given their own traction groups, banded by footprint.
+  - Custom animal bodies from mods now classify by their parts when the body name is unfamiliar.
+
 1.1
   - Creature traction: how much of the floor bonus a creature can use, from full benefit down through indifference to an outright penalty.
   - Creatures grouped by body type and size band, read from race data, so modded animals classify themselves.

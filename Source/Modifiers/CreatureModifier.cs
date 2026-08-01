@@ -13,7 +13,7 @@ namespace DynamicWalkSpeeds.Modifiers
 
         public static readonly string[] BodyTypes =
         {
-            "Hoofed", "Padded", "Taloned", "Insectoid", "Shelled", "Serpentine", "Mechanoid", "Humanlike", "Other"
+            "Hoofed", "Padded", "Taloned", "Insectoid", "Shelled", "Serpentine", "Mechanoid", "Vehicle", "Humanlike", "Other"
         };
 
         public static readonly string[] SizeBands = { "Small", "Medium", "Large" };
@@ -22,15 +22,47 @@ namespace DynamicWalkSpeeds.Modifiers
 
         public static string GetGroupKey(ThingDef def)
         {
-            if (def == null || def.race == null)
+            if (def == null)
                 return null;
 
             if (groupCache.TryGetValue(def, out string cached))
                 return cached;
 
-            string key = ClassifyBody(def.race) + "_" + ClassifySize(def.race.baseBodySize);
+            string key;
+            if (IsVehicleDef(def))
+            {
+                key = "Vehicle_" + ClassifyFootprint(def);
+            }
+            else if (def.race == null)
+            {
+                key = null;
+            }
+            else
+            {
+                key = ClassifyBody(def.race) + "_" + ClassifySize(def.race.baseBodySize);
+            }
+
             groupCache[def] = key;
             return key;
+        }
+
+        public static bool IsVehicleDef(ThingDef def)
+        {
+            System.Type t = def.GetType();
+            while (t != null)
+            {
+                if (t.Name == "VehicleDef") return true;
+                t = t.BaseType;
+            }
+            return false;
+        }
+
+        public static string ClassifyFootprint(ThingDef def)
+        {
+            int area = def.size.x * def.size.z;
+            if (area <= 2) return "Small";
+            if (area <= 6) return "Medium";
+            return "Large";
         }
 
         public static string ClassifyBody(RaceProperties race)
@@ -51,7 +83,33 @@ namespace DynamicWalkSpeeds.Modifiers
             if (body.Contains("Snake")) return "Serpentine";
             if (body.Contains("Turtle") || body.Contains("Shell") || body.Contains("Pinniped")) return "Shelled";
 
-            return "Other";
+            return ClassifyByParts(race.body) ?? "Other";
+        }
+
+        private static string ClassifyByParts(BodyDef body)
+        {
+            List<BodyPartRecord> parts = body?.AllParts;
+            if (parts == null) return null;
+
+            bool hoof = false, shell = false, padded = false, talon = false, foot = false;
+            for (int i = 0; i < parts.Count; i++)
+            {
+                string n = parts[i].def?.defName;
+                if (n == null) continue;
+
+                if (n.Contains("Hoof")) hoof = true;
+                else if (n.Contains("Shell") || n.Contains("Plastron")) shell = true;
+                else if (n.Contains("Paw") || n.Contains("Claw")) padded = true;
+                else if (n.Contains("Talon") || n.Contains("Beak")) talon = true;
+                else if (n.Contains("Foot") || n.Contains("Toe")) foot = true;
+            }
+
+            if (hoof) return "Hoofed";
+            if (shell) return "Shelled";
+            if (padded) return "Padded";
+            if (talon) return "Taloned";
+            if (foot) return "Padded";
+            return null;
         }
 
         public static string ClassifySize(float bodySize)
@@ -88,6 +146,10 @@ namespace DynamicWalkSpeeds.Modifiers
                 case "Mechanoid_Small":
                 case "Mechanoid_Medium":
                 case "Mechanoid_Large": return 1.25f;
+
+                case "Vehicle_Small":
+                case "Vehicle_Medium":
+                case "Vehicle_Large": return 1.50f;
 
                 default: return 1.00f;
             }
@@ -138,7 +200,8 @@ namespace DynamicWalkSpeeds.Modifiers
             if (!FloorModifier.IsManufactured(terrain))
                 return floorMult;
 
-            float traction = GetTraction(pawn.def, settings);
+            float traction = GetTraction(pawn.def, settings) + ApparelModifier.GetFootwearTraction(pawn, settings);
+            traction = UnityEngine.Mathf.Clamp(traction, MinTraction, MaxTraction);
             return 1.0f + (floorMult - 1.0f) * traction;
         }
 

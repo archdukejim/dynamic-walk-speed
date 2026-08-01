@@ -28,6 +28,7 @@ namespace DynamicWalkSpeeds
             if (Widgets.ButtonText(new Rect(tabRect.x + 145f, tabRect.y, 140f, 28f), "Floors")) currentTab = 1;
             if (Widgets.ButtonText(new Rect(tabRect.x + 290f, tabRect.y, 180f, 28f), "Territory and Surface")) currentTab = 2;
             if (Widgets.ButtonText(new Rect(tabRect.x + 475f, tabRect.y, 140f, 28f), "Creatures")) currentTab = 3;
+            if (Widgets.ButtonText(new Rect(tabRect.x + 620f, tabRect.y, 140f, 28f), "Footwear")) currentTab = 4;
 
             listing.Gap(10f);
 
@@ -44,6 +45,9 @@ namespace DynamicWalkSpeeds
                     break;
                 case 3:
                     Settings.SettingsUICreatures.DrawCreaturesTab(listing, settings, inRect);
+                    break;
+                case 4:
+                    Settings.SettingsUIFootwear.DrawFootwearTab(listing, settings, inRect);
                     break;
             }
 
