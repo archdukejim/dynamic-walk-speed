@@ -18,6 +18,12 @@ namespace DynamicWalkSpeeds
 
         public override string SettingsCategory() => "Dynamic Walk Speeds";
 
+        public override void WriteSettings()
+        {
+            base.WriteSettings();
+            Thoughts.ThoughtTuning.Apply(settings);
+        }
+
         public override void DoSettingsWindowContents(Rect inRect)
         {
             Listing_Standard listing = new Listing_Standard();

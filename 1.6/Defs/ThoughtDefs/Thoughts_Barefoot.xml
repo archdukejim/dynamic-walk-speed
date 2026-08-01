@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <ThoughtDef>
+    <defName>DWS_BarefootUncovered</defName>
+    <workerClass>DynamicWalkSpeeds.Thoughts.ThoughtWorker_BarefootFeet</workerClass>
+    <validWhileDespawned>false</validWhileDespawned>
+    <stages>
+      <li>
+        <label>bare feet</label>
+        <description>I have nothing on my feet. I would rather not be walking around like this.</description>
+        <baseMoodEffect>-3</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>DWS_BarefootPainfulGround</defName>
+    <durationDays>0.4</durationDays>
+    <stackLimit>5</stackLimit>
+    <stackedEffectMultiplier>0.75</stackedEffectMultiplier>
+    <stages>
+      <li>
+        <label>sore feet</label>
+        <description>I have been walking on rough ground with nothing on my feet. Every step tells me about it.</description>
+        <baseMoodEffect>-2</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+</Defs>

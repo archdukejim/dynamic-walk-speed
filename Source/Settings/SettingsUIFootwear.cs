@@ -72,6 +72,36 @@ namespace DynamicWalkSpeeds.Settings
             }
 
             listing.GapLine(8f);
+            listing.Label("Consequences of going barefoot (humanlike pawns only):");
+
+            listing.CheckboxLabeled("Nudists Are Exempt", ref settings.barefootNudistsExempt,
+                "Nudists take no mood hit and no foot injuries. They opted in.");
+
+            listing.CheckboxLabeled("Mood: Bare Feet", ref settings.enableBarefootMoodPenalty,
+                "A standing mood penalty while the pawn has nothing on its feet, anywhere on the map.");
+            if (settings.enableBarefootMoodPenalty)
+            {
+                settings.barefootMoodOffset = listing.SliderLabeled(
+                    $"    Bare Feet Mood ({settings.barefootMoodOffset:F0})", settings.barefootMoodOffset, -20f, 0f);
+            }
+
+            listing.CheckboxLabeled("Mood: Sore Feet On Painful Ground", ref settings.enablePainfulGroundMood,
+                "A stacking memory gained each in game hour spent barefoot on ground that carries a barefoot penalty.");
+            if (settings.enablePainfulGroundMood)
+            {
+                settings.painfulGroundMoodOffset = listing.SliderLabeled(
+                    $"    Sore Feet Mood ({settings.painfulGroundMoodOffset:F0})", settings.painfulGroundMoodOffset, -20f, 0f);
+            }
+
+            listing.CheckboxLabeled("Foot Injuries", ref settings.enableFootInjury,
+                "Each in game hour spent barefoot on painful ground carries a chance of a bruise or a cut to a foot.");
+            if (settings.enableFootInjury)
+            {
+                settings.footInjuryChance = listing.SliderLabeled(
+                    $"    Injury Chance Per Hour ({(settings.footInjuryChance * 100f):F2}%)", settings.footInjuryChance, 0f, 0.05f);
+            }
+
+            listing.GapLine(8f);
 
             listing.CheckboxLabeled("Enable Footwear Traction", ref settings.enableFootwearTraction,
                 "Worn apparel covering the chosen body part groups adds to a pawn's traction, so flooring pays off more for a shod pawn.");
@@ -131,7 +161,7 @@ namespace DynamicWalkSpeeds.Settings
 
             listing.Label($"Apparel occupying that slot ({matching.Count}):");
 
-            Rect outRect = listing.GetRect(inRect.height - listing.CurHeight - 40f);
+            Rect outRect = listing.GetRect(Mathf.Max(120f, inRect.height - listing.CurHeight - 40f));
             Rect viewRect = new Rect(0f, 0f, outRect.width - 18f, matching.Count * 32f);
 
             Widgets.BeginScrollView(outRect, ref scrollPosition, viewRect);
@@ -161,7 +191,7 @@ namespace DynamicWalkSpeeds.Settings
             listing.Gap(6f);
             listing.Label("Barefoot speed on each terrain. 1.00x is no penalty. Rough stone and gravel lead the list.");
 
-            Rect outRect = listing.GetRect(inRect.height - listing.CurHeight - 40f);
+            Rect outRect = listing.GetRect(Mathf.Max(120f, inRect.height - listing.CurHeight - 40f));
             Rect viewRect = new Rect(0f, 0f, outRect.width - 18f, penaltyTerrains.Count * 32f);
 
             Widgets.BeginScrollView(outRect, ref scrollPosition, viewRect);

@@ -41,6 +41,14 @@ namespace DynamicWalkSpeeds
         public bool barefootQualityShields = true;
         public Dictionary<string, float> barefootPenalties = new Dictionary<string, float>();
 
+        public bool barefootNudistsExempt = true;
+        public bool enableBarefootMoodPenalty = true;
+        public float barefootMoodOffset = -3f;
+        public bool enablePainfulGroundMood = true;
+        public float painfulGroundMoodOffset = -2f;
+        public bool enableFootInjury = true;
+        public float footInjuryChance = 0.001f;
+
         public override void ExposeData()
         {
             base.ExposeData();
@@ -79,6 +87,14 @@ namespace DynamicWalkSpeeds
             Scribe_Values.Look(ref barefootPenaltyScale, "barefootPenaltyScale", 1.0f);
             Scribe_Values.Look(ref barefootQualityShields, "barefootQualityShields", true);
             Scribe_Collections.Look(ref barefootPenalties, "barefootPenalties", LookMode.Value, LookMode.Value);
+
+            Scribe_Values.Look(ref barefootNudistsExempt, "barefootNudistsExempt", true);
+            Scribe_Values.Look(ref enableBarefootMoodPenalty, "enableBarefootMoodPenalty", true);
+            Scribe_Values.Look(ref barefootMoodOffset, "barefootMoodOffset", -3f);
+            Scribe_Values.Look(ref enablePainfulGroundMood, "enablePainfulGroundMood", true);
+            Scribe_Values.Look(ref painfulGroundMoodOffset, "painfulGroundMoodOffset", -2f);
+            Scribe_Values.Look(ref enableFootInjury, "enableFootInjury", true);
+            Scribe_Values.Look(ref footInjuryChance, "footInjuryChance", 0.001f);
 
             if (weatherMultipliers == null) weatherMultipliers = new Dictionary<string, float>();
             if (floorMultipliers == null) floorMultipliers = new Dictionary<string, float>();

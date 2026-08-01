@@ -68,7 +68,7 @@ namespace DynamicWalkSpeeds.Settings
                 }
             }
 
-            Rect outRect = listing.GetRect(inRect.height - listing.CurHeight - 40f);
+            Rect outRect = listing.GetRect(Mathf.Max(120f, inRect.height - listing.CurHeight - 40f));
             Rect viewRect = new Rect(0f, 0f, outRect.width - 18f, viewH);
 
             Widgets.BeginScrollView(outRect, ref scrollPosition, viewRect);
