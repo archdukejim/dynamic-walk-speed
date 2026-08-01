@@ -27,6 +27,8 @@ namespace DynamicWalkSpeeds.Settings
                     listing.CheckboxLabeled("Trigger on Active Hostile Pawns Present", ref settings.activeHostilePawnsTrigger);
                 }
                 settings.hostileTerritoryMultiplier = listing.SliderLabeled($"Hostile Speed Multiplier ({settings.hostileTerritoryMultiplier:F2}x)", settings.hostileTerritoryMultiplier, 0.50f, 1.00f);
+                listing.CheckboxLabeled("Fleeing Pawns Are Exempt", ref settings.territoryFleeingExempt,
+                    "A pawn that is fleeing or in a panic flee mental state drops the hostile territory penalty entirely. Running for your life is the one time the ground stops mattering.");
             }
         }
     }

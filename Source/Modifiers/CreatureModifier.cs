@@ -19,6 +19,38 @@ namespace DynamicWalkSpeeds.Modifiers
         public static readonly string[] SizeBands = { "Small", "Medium", "Large" };
 
         private static readonly Dictionary<ThingDef, string> groupCache = new Dictionary<ThingDef, string>();
+        private static readonly Dictionary<ThingDef, float> tractionCache = new Dictionary<ThingDef, float>();
+        private static readonly Dictionary<ThingDef, float> speedCache = new Dictionary<ThingDef, float>();
+
+        public static void InvalidateSettingsCache()
+        {
+            tractionCache.Clear();
+            speedCache.Clear();
+        }
+
+        private static float GetTractionCached(ThingDef def, DynamicWalkSpeedsSettings settings)
+        {
+            if (def == null) return 1.00f;
+
+            if (tractionCache.TryGetValue(def, out float cached))
+                return cached;
+
+            float result = GetTraction(def, settings);
+            tractionCache[def] = result;
+            return result;
+        }
+
+        private static float GetSpeedCached(ThingDef def, DynamicWalkSpeedsSettings settings)
+        {
+            if (def == null) return 1.00f;
+
+            if (speedCache.TryGetValue(def, out float cached))
+                return cached;
+
+            float result = GetSpeed(def, settings);
+            speedCache[def] = result;
+            return result;
+        }
 
         public static string GetGroupKey(ThingDef def)
         {
@@ -200,7 +232,7 @@ namespace DynamicWalkSpeeds.Modifiers
             if (!FloorModifier.IsManufactured(terrain))
                 return floorMult;
 
-            float traction = GetTraction(pawn.def, settings) + ApparelModifier.GetFootwearTraction(pawn, settings);
+            float traction = GetTractionCached(pawn.def, settings) + ApparelModifier.GetFootwearTraction(pawn, settings);
             traction = UnityEngine.Mathf.Clamp(traction, MinTraction, MaxTraction);
             return 1.0f + (floorMult - 1.0f) * traction;
         }
@@ -210,7 +242,7 @@ namespace DynamicWalkSpeeds.Modifiers
             if (pawn == null || !settings.enableCreatureModifiers)
                 return 1.0f;
 
-            return GetSpeed(pawn.def, settings);
+            return GetSpeedCached(pawn.def, settings);
         }
     }
 }

@@ -22,6 +22,7 @@ namespace DynamicWalkSpeeds
         {
             base.WriteSettings();
             Thoughts.ThoughtTuning.Apply(settings);
+            Modifiers.SpeedCaches.InvalidateSettings();
         }
 
         public override void DoSettingsWindowContents(Rect inRect)

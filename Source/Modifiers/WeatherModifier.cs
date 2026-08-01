@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using RimWorld;
 using Verse;
 
@@ -5,6 +6,13 @@ namespace DynamicWalkSpeeds.Modifiers
 {
     public static class WeatherModifier
     {
+        private static readonly Dictionary<WeatherDef, float> weatherCache = new Dictionary<WeatherDef, float>();
+
+        public static void InvalidateSettingsCache()
+        {
+            weatherCache.Clear();
+        }
+
         public static float GetWeatherMultiplier(Map map, DynamicWalkSpeedsSettings settings)
         {
             if (map == null || !settings.enableWeatherModifiers)
@@ -14,12 +22,15 @@ namespace DynamicWalkSpeeds.Modifiers
             if (curWeather == null)
                 return 1.0f;
 
-            if (settings.weatherMultipliers.TryGetValue(curWeather.defName, out float mult))
-            {
-                return mult;
-            }
+            if (weatherCache.TryGetValue(curWeather, out float cached))
+                return cached;
 
-            return GetDefaultWeatherMultiplier(curWeather);
+            float result = settings.weatherMultipliers.TryGetValue(curWeather.defName, out float mult)
+                ? mult
+                : GetDefaultWeatherMultiplier(curWeather);
+
+            weatherCache[curWeather] = result;
+            return result;
         }
 
         public static float GetDefaultWeatherMultiplier(WeatherDef weather)

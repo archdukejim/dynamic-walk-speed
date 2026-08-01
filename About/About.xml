@@ -68,6 +68,8 @@ Snow is charged by depth, so a light dusting is nothing and a drift is punishing
 --- HOSTILE TERRITORY ---
 Pawns move at 0.90x by default when the ground is not friendly, on a slider from 0.50x to 1.00x. Two things can trigger it: standing on a map tile owned by a faction hostile to you, or simply having a live enemy on the map. Linked, either one is enough. Unlink them and you can pick exactly which one counts, so you can have the penalty apply on enemy bases only and never during a raid on your own colony.
 
+A pawn that is fleeing drops the penalty entirely. Running for your life is the one moment the ground stops mattering, so a rout is a rout rather than a slow walk home. It covers both the flee job and the panic flee mental state, and it can be switched off.
+
 --- SETTINGS ---
 Five tabs. Weather is a scrollable list of every weather in your game. Floors is the master scale plus a scrollable list of every terrain. Territory and Surface holds the snow and filth impact scales, the hostile multiplier and its two triggers. Creatures holds the traction and speed sliders for each populated group, with an optional per creature override list underneath. Footwear holds the barefoot penalties and their per terrain list, the per item traction, the quality and condition toggles, and the choice of which body part groups count as a traction slot. Every section has its own enable toggle, so you can run this as a floors only mod, or a traction only mod, and leave the rest at vanilla.
 
@@ -80,6 +82,8 @@ Safe to add or remove mid save. Nothing is stored on your pawns or your map, so 
 
 --- CHANGE LOG ---
 1.2
+  - Fleeing pawns drop the hostile territory penalty.
+  - Caching pass: terrain, weather and race values are memoised per def, worn footwear is scanned at most once a second per pawn, and the hostile pawn sweep is cached per map and faction instead of running for every cell entered.
   - Barefoot terrain penalties: rough stone, gravel and ice punish a pawn with nothing on its feet, and boots take that away.
   - Bare feet mood penalty, a stacking sore feet memory on painful ground, and a rare chance of a bruised or cut foot. Nudists exempt.
   - Footwear traction: boots and shoes add a small grip bonus on manufactured floors, and their quality scales how much.

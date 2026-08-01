@@ -129,6 +129,8 @@ Pawns move at [b]0.90x[/b] by default when the ground is not friendly, on a slid
 
 Linked, either one is enough. Unlink them and you choose exactly which counts, so you can have the penalty bite when you assault an enemy base and never when a raid lands on your own doorstep.
 
+[b]Fleeing pawns drop the penalty entirely.[/b] Running for your life is the one moment the ground stops mattering, so a rout is a rout rather than a slow walk home. Covers both the flee job and the panic flee mental state, and can be switched off.
+
 [h2]Settings[/h2]
 
 Three tabs, everything live, nothing requiring a restart.
@@ -153,12 +155,15 @@ Every section has its own enable toggle, so this happily runs as a floors only m
 [*][b]Modded weather, floors, animals and apparel work out of the box.[/b] Every list is read from the game's own defs, so anything another mod adds shows up in settings with a sensible starting value. Animals classify by body name first and by the body's own parts as a fallback, so a mod shipping a custom body still lands in the right group.
 [*][b]Applies to everything that walks[/b] - your colonists and animals as much as the raiders coming at them. Flooring your base is an advantage on defence; so is leaving the approach unpaved. With traction on, a paved killbox is now worth rather less to the hoofed things running down it.
 [*][b]One patch, one method.[/b] The mod postfixes the per cell move cost and touches nothing else, which keeps it out of the way of mods that work on stats, pathfinding, or terrain generation.
+[*][b]Built to stay out of your tick.[/b] The move cost postfix runs constantly, so everything behind it is cached. Terrain, weather and race values are memoised per def rather than looked up by name on every cell. Worn footwear is scanned at most once a second per pawn instead of twice per cell. The hostile pawn sweep, which would otherwise walk every pawn on the map for every cell entered, is cached per map and per faction and short circuits entirely when the map tile alone already answers the question. Caches drop when you change a setting and are pruned hourly.
 [/list]
 
 [h2]Change log[/h2]
 
 [b]1.2[/b]
 [list]
+[*]Fleeing pawns drop the hostile territory penalty.
+[*]Caching pass: per def memoisation for terrain, weather and race, per pawn footwear scanned once a second, and the hostile pawn sweep cached per map and faction.
 [*]Barefoot terrain penalties: rough stone, gravel and ice punish a pawn with nothing on its feet, and boots take that away.
 [*]Bare feet mood penalty, a stacking sore feet memory on painful ground, and a rare chance of a bruised or cut foot. Nudists exempt.
 [*]Footwear traction: boots and shoes add a small grip bonus on manufactured floors, and their quality scales how much.

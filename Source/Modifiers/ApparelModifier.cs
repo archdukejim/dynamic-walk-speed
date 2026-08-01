@@ -9,13 +9,90 @@ namespace DynamicWalkSpeeds.Modifiers
         public const float MinFootwearTraction = -1.00f;
         public const float MaxFootwearTraction = 1.50f;
 
+        private const int PawnScanTtl = 60;
+
         private static readonly Dictionary<ThingDef, bool> coversCache = new Dictionary<ThingDef, bool>();
         private static string coversCacheKey;
+
+        private static readonly Dictionary<TerrainDef, float> barefootCache = new Dictionary<TerrainDef, float>();
+
+        private class PawnFootwear
+        {
+            public int tick = -99999;
+            public float traction;
+            public float coverage;
+        }
+
+        private static readonly Dictionary<Pawn, PawnFootwear> pawnCache = new Dictionary<Pawn, PawnFootwear>();
 
         public static void InvalidateCache()
         {
             coversCache.Clear();
             coversCacheKey = null;
+            barefootCache.Clear();
+            pawnCache.Clear();
+        }
+
+        public static void PruneCache()
+        {
+            if (pawnCache.Count == 0) return;
+
+            int now = Find.TickManager != null ? Find.TickManager.TicksGame : 0;
+            List<Pawn> stale = null;
+
+            foreach (KeyValuePair<Pawn, PawnFootwear> pair in pawnCache)
+            {
+                Pawn p = pair.Key;
+                if (p == null || p.Destroyed || !p.Spawned || now - pair.Value.tick > 2500)
+                {
+                    if (stale == null) stale = new List<Pawn>();
+                    stale.Add(p);
+                }
+            }
+
+            if (stale == null) return;
+            for (int i = 0; i < stale.Count; i++) pawnCache.Remove(stale[i]);
+        }
+
+        private static PawnFootwear GetPawnFootwear(Pawn pawn, DynamicWalkSpeedsSettings settings)
+        {
+            int now = Find.TickManager != null ? Find.TickManager.TicksGame : 0;
+
+            if (!pawnCache.TryGetValue(pawn, out PawnFootwear entry))
+            {
+                entry = new PawnFootwear();
+                pawnCache[pawn] = entry;
+            }
+            else if (now - entry.tick < PawnScanTtl)
+            {
+                return entry;
+            }
+
+            ScanWorn(pawn, settings, entry);
+            entry.tick = now;
+            return entry;
+        }
+
+        private static void ScanWorn(Pawn pawn, DynamicWalkSpeedsSettings settings, PawnFootwear entry)
+        {
+            entry.traction = 0f;
+            entry.coverage = 0f;
+
+            List<Apparel> worn = pawn.apparel?.WornApparel;
+            if (worn == null) return;
+
+            for (int i = 0; i < worn.Count; i++)
+            {
+                Apparel a = worn[i];
+                if (a == null || !CoversTractionSlot(a.def, settings))
+                    continue;
+
+                float condition = GetConditionFactor(a, settings);
+                entry.traction += GetBaseTraction(a.def, settings) * condition;
+
+                float cover = settings.barefootQualityShields ? condition : 1f;
+                if (cover > entry.coverage) entry.coverage = cover;
+            }
         }
 
         public static bool CoversTractionSlot(ThingDef def, DynamicWalkSpeedsSettings settings)
@@ -75,28 +152,10 @@ namespace DynamicWalkSpeeds.Modifiers
 
         public static float GetFootwearTraction(Pawn pawn, DynamicWalkSpeedsSettings settings)
         {
-            if (pawn == null || !settings.enableFootwearTraction)
+            if (pawn == null || pawn.apparel == null || !settings.enableFootwearTraction)
                 return 0f;
 
-            Pawn_ApparelTracker tracker = pawn.apparel;
-            if (tracker == null)
-                return 0f;
-
-            List<Apparel> worn = tracker.WornApparel;
-            if (worn == null || worn.Count == 0)
-                return 0f;
-
-            float total = 0f;
-            for (int i = 0; i < worn.Count; i++)
-            {
-                Apparel a = worn[i];
-                if (a == null || !CoversTractionSlot(a.def, settings))
-                    continue;
-
-                total += GetBaseTraction(a.def, settings) * GetConditionFactor(a, settings);
-            }
-
-            return total;
+            return GetPawnFootwear(pawn, settings).traction;
         }
 
         private static float GetConditionFactor(Apparel a, DynamicWalkSpeedsSettings settings)
@@ -117,26 +176,10 @@ namespace DynamicWalkSpeeds.Modifiers
 
         public static float GetBestCoverage(Pawn pawn, DynamicWalkSpeedsSettings settings)
         {
-            Pawn_ApparelTracker tracker = pawn?.apparel;
-            if (tracker == null)
+            if (pawn?.apparel == null)
                 return -1f;
 
-            List<Apparel> worn = tracker.WornApparel;
-            if (worn == null)
-                return 0f;
-
-            float best = 0f;
-            for (int i = 0; i < worn.Count; i++)
-            {
-                Apparel a = worn[i];
-                if (a == null || !CoversTractionSlot(a.def, settings))
-                    continue;
-
-                float cover = settings.barefootQualityShields ? GetConditionFactor(a, settings) : 1f;
-                if (cover > best) best = cover;
-            }
-
-            return best;
+            return GetPawnFootwear(pawn, settings).coverage;
         }
 
         public static float GetDefaultBarefootPenalty(TerrainDef terrain)
@@ -158,9 +201,13 @@ namespace DynamicWalkSpeeds.Modifiers
         {
             if (terrain == null) return 1.00f;
 
+            if (barefootCache.TryGetValue(terrain, out float cached))
+                return cached;
+
             if (!settings.barefootPenalties.TryGetValue(terrain.defName, out float penalty))
                 penalty = GetDefaultBarefootPenalty(terrain);
 
+            barefootCache[terrain] = penalty;
             return penalty;
         }
 

@@ -17,6 +17,8 @@ namespace DynamicWalkSpeeds.Thoughts
             if (Find.TickManager.TicksGame % IntervalTicks != 0)
                 return;
 
+            Modifiers.SpeedCaches.Prune();
+
             DynamicWalkSpeedsSettings settings = DynamicWalkSpeedsMod.settings;
             if (settings == null)
                 return;
