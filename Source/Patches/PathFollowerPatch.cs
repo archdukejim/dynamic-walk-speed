@@ -17,8 +17,11 @@ namespace DynamicWalkSpeeds.Patches
             if (settings == null)
                 return;
 
+            if (!SpeedCaches.AnyEnabled(settings))
+                return;
+
             Map map = pawn.Map;
-            TerrainDef terrain = c.InBounds(map) ? c.GetTerrain(map) : null;
+            TerrainDef terrain = SpeedCaches.NeedsTerrain(settings) && c.InBounds(map) ? c.GetTerrain(map) : null;
 
             float weatherMult = WeatherModifier.GetWeatherMultiplier(map, settings);
             float floorMult = FloorModifier.GetFloorMultiplier(terrain, settings);

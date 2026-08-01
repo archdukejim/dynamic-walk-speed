@@ -8,6 +8,7 @@ namespace DynamicWalkSpeeds.Modifiers
     public static class TerritoryModifier
     {
         private const int HostileScanTtl = 60;
+        private const int TileFactionTtl = 250;
 
         private class MapTerritoryData
         {
@@ -15,6 +16,8 @@ namespace DynamicWalkSpeeds.Modifiers
             public readonly Dictionary<Faction, bool> resultByFaction = new Dictionary<Faction, bool>();
             public int noFactionTick = -99999;
             public bool noFactionResult;
+            public int tileTick = -99999;
+            public bool tileResult;
         }
 
         private static readonly Dictionary<Map, MapTerritoryData> mapCache = new Dictionary<Map, MapTerritoryData>();
@@ -61,7 +64,7 @@ namespace DynamicWalkSpeeds.Modifiers
                 return 1.0f;
 
             Map map = pawn.Map;
-            bool isHostileTile = IsHostileMapTile(map);
+            bool isHostileTile = IsHostileMapTileCached(map);
 
             if (settings.linkTerritoryTriggers)
             {
@@ -78,6 +81,24 @@ namespace DynamicWalkSpeeds.Modifiers
                 return settings.hostileTerritoryMultiplier;
 
             return 1.0f;
+        }
+
+        private static bool IsHostileMapTileCached(Map map)
+        {
+            int now = Find.TickManager != null ? Find.TickManager.TicksGame : 0;
+
+            if (!mapCache.TryGetValue(map, out MapTerritoryData data))
+            {
+                data = new MapTerritoryData();
+                mapCache[map] = data;
+            }
+
+            if (now - data.tileTick < TileFactionTtl)
+                return data.tileResult;
+
+            data.tileResult = IsHostileMapTile(map);
+            data.tileTick = now;
+            return data.tileResult;
         }
 
         private static bool IsHostileMapTile(Map map)
