@@ -115,18 +115,29 @@ namespace DynamicWalkSpeeds.Debugging
 
             // ---- terrain ----
             StringBuilder t = new StringBuilder();
-            t.AppendLine("defName,label,manufactured,floorMult,barefootPenalty,vanillaPathCost");
+            t.AppendLine("defName,label,manufactured,floorMult,barefootPenalty,vanillaPathCost,costList");
             List<TerrainDef> terrains = DefDatabase<TerrainDef>.AllDefsListForReading;
             for (int i = 0; i < terrains.Count; i++)
             {
                 TerrainDef d = terrains[i];
+
+                string cost = "-";
+                if (d.costList != null && d.costList.Count > 0)
+                {
+                    List<string> parts = new List<string>();
+                    for (int k = 0; k < d.costList.Count; k++)
+                        parts.Add(d.costList[k].thingDef?.defName + "=" + d.costList[k].count);
+                    cost = string.Join(" ", parts);
+                }
+
                 t.AppendLine(string.Join(",",
                     d.defName,
                     Quote(d.LabelCap),
                     FloorModifier.IsManufactured(d) ? "yes" : "no",
                     FloorModifier.GetFloorMultiplier(d, settings).ToString("F3"),
                     ApparelModifier.ResolveBarefootPenalty(d, settings).ToString("F2"),
-                    d.pathCost.ToString()));
+                    d.pathCost.ToString(),
+                    Quote(cost)));
             }
             Write("DWS_TerrainTable.csv", t.ToString());
 
