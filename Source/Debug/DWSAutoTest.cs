@@ -156,8 +156,20 @@ namespace DynamicWalkSpeeds.Debugging
             DynamicWalkSpeedsSettings s = DynamicWalkSpeedsMod.settings;
             if (s == null) { Fail("settings", "DynamicWalkSpeedsMod.settings was null"); return; }
 
+            // Barefoot ships disabled as an experimental option. Force it on for the suite so
+            // the assertions still exercise the code rather than trivially passing through the
+            // disabled early-out, then restore the shipped default.
+            bool shippedBarefoot = s.enableBarefootPenalty;
+            s.enableBarefootPenalty = true;
+
             SpeedCaches.InvalidateSettings();
             SpeedTables.EnsureBuilt(s);
+
+            Check("defaults.barefootDisabled", !shippedBarefoot,
+                $"barefoot should ship disabled, shipped value was {shippedBarefoot}");
+            Check("defaults.moodDisabled",
+                !s.enableBarefootMoodPenalty && !s.enablePainfulGroundMood && !s.enableFootInjury,
+                $"mood={s.enableBarefootMoodPenalty} soreFeet={s.enablePainfulGroundMood} injury={s.enableFootInjury}");
 
             RaceClassification();
             TerrainClassification(s);
@@ -171,6 +183,9 @@ namespace DynamicWalkSpeeds.Debugging
 
             try { DWSDebugActions.BenchmarkModifiers(); Pass("benchmark", "benchmark completed, see ns/call above"); }
             catch (Exception e) { Fail("benchmark", e.Message); }
+
+            s.enableBarefootPenalty = shippedBarefoot;
+            SpeedCaches.InvalidateSettings();
         }
 
         private static void RaceClassification()

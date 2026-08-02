@@ -20,9 +20,13 @@ every modifier can be switched off on its own.
   charged by the unit of thickness.
 - **Hostile territory** — slower on enemy ground, unless the pawn is fleeing.
 
-Plus barefoot terrain penalties, footwear traction scaled by quality, and three
-optional consequences of going barefoot: a mood penalty, a stacking sore-feet
-memory, and a rare foot injury.
+Plus footwear traction scaled by quality.
+
+**Experimental, shipped disabled:** barefoot terrain penalties and three
+consequences of going barefoot — a mood penalty, a stacking sore-feet memory, and
+a rare foot injury. These are the only parts of the mod that add content and
+damage pawns, and they have not been through real play, so they are opt-in until
+1.0.
 
 ## Creature classification
 

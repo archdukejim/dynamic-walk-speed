@@ -60,8 +60,15 @@ namespace DynamicWalkSpeeds.Settings
         {
             BuildGroupList();
 
+            Text.Font = GameFont.Small;
+            GUI.color = new Color(1f, 0.82f, 0.4f);
+            listing.Label("EXPERIMENTAL - off by default, being finished for 1.0");
+            GUI.color = Color.white;
+            listing.Label("Everything in this section is untested in real play. The mood effects and the injury roll are the only parts of this mod that add content and damage pawns, so they stay opt in until they have been played rather than only measured. Enable at your own risk on a save you do not mind losing.");
+            listing.Gap(4f);
+
             listing.CheckboxLabeled("Enable Barefoot Terrain Penalties", ref settings.enableBarefootPenalty,
-                "A pawn that could wear footwear but is not slows down on ground that hurts to walk on. Animals are never penalised.");
+                "EXPERIMENTAL. A pawn that could wear footwear but is not slows down on ground that hurts to walk on. Animals and mechanoids are never penalised.");
             if (settings.enableBarefootPenalty)
             {
                 settings.barefootPenaltyScale = listing.SliderLabeled(
@@ -72,7 +79,7 @@ namespace DynamicWalkSpeeds.Settings
             }
 
             listing.GapLine(8f);
-            listing.Label("Consequences of going barefoot (humanlike pawns only):");
+            listing.Label("EXPERIMENTAL consequences of going barefoot (humanlike pawns only):");
 
             listing.CheckboxLabeled("Nudists Are Exempt", ref settings.barefootNudistsExempt,
                 "Nudists take no mood hit and no foot injuries. They opted in.");
@@ -102,6 +109,7 @@ namespace DynamicWalkSpeeds.Settings
             }
 
             listing.GapLine(8f);
+            listing.Label("Footwear traction is not experimental and is on by default:");
 
             listing.CheckboxLabeled("Enable Footwear Traction", ref settings.enableFootwearTraction,
                 "Worn apparel covering the chosen body part groups adds to a pawn's traction, so flooring pays off more for a shod pawn.");

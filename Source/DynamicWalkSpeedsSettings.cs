@@ -37,17 +37,21 @@ namespace DynamicWalkSpeeds
         public List<string> footwearBodyPartGroups = new List<string> { "Feet" };
         public Dictionary<string, float> footwearTraction = new Dictionary<string, float>();
 
-        public bool enableBarefootPenalty = true;
+        // Experimental, off by default until 1.0. Never exercised in real play: the mood
+        // thoughts and the injury roll are the only parts of this mod that create content
+        // and damage pawns, so they stay opt-in until they have been played rather than
+        // only asserted against.
+        public bool enableBarefootPenalty = false;
         public float barefootPenaltyScale = 1.0f;
         public bool barefootQualityShields = true;
         public Dictionary<string, float> barefootPenalties = new Dictionary<string, float>();
 
         public bool barefootNudistsExempt = true;
-        public bool enableBarefootMoodPenalty = true;
+        public bool enableBarefootMoodPenalty = false;
         public float barefootMoodOffset = -3f;
-        public bool enablePainfulGroundMood = true;
+        public bool enablePainfulGroundMood = false;
         public float painfulGroundMoodOffset = -2f;
-        public bool enableFootInjury = true;
+        public bool enableFootInjury = false;
         public float footInjuryChance = 0.001f;
 
         public override void ExposeData()
@@ -85,17 +89,17 @@ namespace DynamicWalkSpeeds
             Scribe_Collections.Look(ref footwearBodyPartGroups, "footwearBodyPartGroups", LookMode.Value);
             Scribe_Collections.Look(ref footwearTraction, "footwearTraction", LookMode.Value, LookMode.Value);
 
-            Scribe_Values.Look(ref enableBarefootPenalty, "enableBarefootPenalty", true);
+            Scribe_Values.Look(ref enableBarefootPenalty, "enableBarefootPenalty", false);
             Scribe_Values.Look(ref barefootPenaltyScale, "barefootPenaltyScale", 1.0f);
             Scribe_Values.Look(ref barefootQualityShields, "barefootQualityShields", true);
             Scribe_Collections.Look(ref barefootPenalties, "barefootPenalties", LookMode.Value, LookMode.Value);
 
             Scribe_Values.Look(ref barefootNudistsExempt, "barefootNudistsExempt", true);
-            Scribe_Values.Look(ref enableBarefootMoodPenalty, "enableBarefootMoodPenalty", true);
+            Scribe_Values.Look(ref enableBarefootMoodPenalty, "enableBarefootMoodPenalty", false);
             Scribe_Values.Look(ref barefootMoodOffset, "barefootMoodOffset", -3f);
-            Scribe_Values.Look(ref enablePainfulGroundMood, "enablePainfulGroundMood", true);
+            Scribe_Values.Look(ref enablePainfulGroundMood, "enablePainfulGroundMood", false);
             Scribe_Values.Look(ref painfulGroundMoodOffset, "painfulGroundMoodOffset", -2f);
-            Scribe_Values.Look(ref enableFootInjury, "enableFootInjury", true);
+            Scribe_Values.Look(ref enableFootInjury, "enableFootInjury", false);
             Scribe_Values.Look(ref footInjuryChance, "footInjuryChance", 0.001f);
 
             if (weatherMultipliers == null) weatherMultipliers = new Dictionary<string, float>();
