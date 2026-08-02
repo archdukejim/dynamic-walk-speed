@@ -1,10 +1,17 @@
 # Testing Dynamic Walk Speeds
 
-Four dev-mode actions ship with the mod, under **Dynamic Walk Speeds** in the
+Six dev-mode actions ship with the mod, under **Dynamic Walk Speeds** in the
 debug actions menu (enable Development mode in Options first).
 
-Run **Clean map for testing** before benchmarking. Ambient fauna and flora
-skew the numbers and blur the results.
+Two different questions, two different tools:
+
+- **Is the maths right?** Dump the speed table. Per cell, exact, in ticks.
+- **What does it cost?** Benchmark the chain for ns/call, and run a tick
+  profile for calls per tick. Multiply.
+
+Run **Clean map for testing** before either. Ambient fauna and flora skew the
+numbers and blur the results — the wildlife count feeds directly into the
+hostile pawn scan.
 
 ## Measure in ticks, not microseconds
 
@@ -81,6 +88,76 @@ pawns cross boundaries.
 
 Terrains that do not exist in your modlist are skipped and logged rather than
 throwing, so the list is safe across different mod setups.
+
+## Sustained performance over time
+
+### Why the obvious A/B is weaker than it looks
+
+Saving unmodded, then reloading the same save with the mod on and comparing
+five minutes of ticks, does not compare the same simulation. This mod changes
+move costs, so pawns take different paths, arrive at different times, pick
+different jobs and pull different random numbers. Within a minute the two runs
+are different worlds. Animal wandering and a single incident firing in one run
+and not the other move the tick rate more than this mod does.
+
+That comparison is still worth having, but read it as two samples from two
+distributions, not as a paired measurement. Run each side several times.
+
+### The direct measurement
+
+You do not have to infer the cost. Take it in two pieces:
+
+1. **How often the postfix runs.** The profiler counts calls per game tick.
+   The counter is a single increment behind a static bool, so it does not
+   meaningfully perturb what it measures.
+2. **What one call costs.** That is the benchmark action, in nanoseconds.
+
+Multiply them for the mod's cost per tick, with no divergence problem at all.
+A colony averaging 400 postfix calls per tick at 120 ns a call is spending
+about 0.05 ms per tick, against a 16.7 ms budget at 60 TPS.
+
+Deliberately not a Stopwatch inside the postfix: `Stopwatch.GetTimestamp` costs
+roughly what the measured work costs, so the instrument would dominate the
+reading.
+
+### Start 5 minute tick profile
+
+Samples once per wall-clock second for five minutes and writes a CSV:
+
+| column | meaning |
+|---|---|
+| `wallSeconds` | seconds since profiling started |
+| `gameTicks` | game ticks in that second |
+| `ticksPerSecond` | achieved TPS, the headline number |
+| `postfixCalls` | postfix invocations in that second |
+| `callsPerTick` | invocations per game tick |
+| `spawnedPawns` | pawns across all maps, the main driver of both |
+
+The filename records whether the mod's modifiers were enabled, so the two
+sides of a comparison do not overwrite each other.
+
+**Set a speed the CPU cannot keep up with.** At normal speed RimWorld caps at
+60 TPS and both runs will read 60, which looks like no impact regardless of
+the truth. Use 3x or dev-mode ultrafast so the tick rate is bound by
+simulation cost. The profiler advances on game ticks, so it also stalls while
+paused.
+
+### A better A/B than mod-out versus mod-in
+
+Keep the modlist identical and toggle this mod's own modifiers instead. Same
+save, same load order, same everything: one run with the modifiers on, one
+with all of them off so the postfix early-outs. That isolates this mod's
+logic and removes modlist mismatch and load-order variance entirely.
+
+The difference between the two designs is worth knowing:
+
+- **Modifiers off** still pays the Harmony patch dispatch on every call, so it
+  measures the mod's *logic*.
+- **Mod uninstalled** removes the patch as well, so it measures logic *plus*
+  the cost of being patched at all.
+
+Run both if you want the full picture. Start with the toggle version: it is
+the cleaner experiment.
 
 ## Clean map for testing (destructive)
 

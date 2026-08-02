@@ -159,6 +159,20 @@ namespace DynamicWalkSpeeds.Debugging
             Log.Message($"[DWS] Painted {terrains.Count} terrain strips of {StripLength} cells from {origin}.");
         }
 
+        [DebugAction("Dynamic Walk Speeds", "Start 5 minute tick profile", allowedGameStates = AllowedGameStates.PlayingOnMap)]
+        public static void StartTickProfile()
+        {
+            DynamicWalkSpeedsSettings settings = DynamicWalkSpeedsMod.settings;
+            string tag = settings != null && SpeedCaches.AnyEnabled(settings) ? "enabled" : "disabled";
+            DWSProfiler.Start(5, tag);
+        }
+
+        [DebugAction("Dynamic Walk Speeds", "Stop tick profile", allowedGameStates = AllowedGameStates.PlayingOnMap)]
+        public static void StopTickProfile()
+        {
+            DWSProfiler.Stop();
+        }
+
         [DebugAction("Dynamic Walk Speeds", "Clean map for testing", allowedGameStates = AllowedGameStates.PlayingOnMap)]
         public static void CleanMapForTesting()
         {

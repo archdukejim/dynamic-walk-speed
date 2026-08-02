@@ -10,6 +10,9 @@ namespace DynamicWalkSpeeds.Patches
     {
         public static void Postfix(Pawn pawn, IntVec3 c, ref float __result)
         {
+            if (Debugging.DWSProfiler.Active)
+                Debugging.DWSProfiler.Calls++;
+
             if (pawn == null || pawn.Map == null || __result <= 0f)
                 return;
 
