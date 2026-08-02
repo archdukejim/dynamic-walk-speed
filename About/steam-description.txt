@@ -209,6 +209,22 @@ That is a change to [i]pathfinding[/i] cost rather than [i]movement[/i] cost, an
 [*]Every modifier independently switchable, every value on a slider.
 [/list]
 
+[h2]Wiki and documentation[/h2]
+
+[b]https://github.com/archdukejim/dynamic-walk-speed/wiki[/b]
+
+Every number in this description was measured in game rather than estimated, and
+the wiki is where the workings live:
+
+[list]
+[*][b]Speed Table[/b] - what every creature actually does on every floor, with vanilla
+and modded ticks side by side. If you want to know whether flooring your barn helps
+or hurts your muffalo, it is one table.
+[*][b]Test Results[/b] - the full 48 case verification run, the bugs it caught, and the
+measured performance figures.
+[*][b]Testing Methodology[/b] - how to reproduce any of it yourself.
+[/list]
+
 [h2]Source[/h2]
 
 MIT licensed: https://github.com/archdukejim/dynamic-walk-speed

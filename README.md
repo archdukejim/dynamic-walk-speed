@@ -53,8 +53,21 @@ One Harmony postfix on `Pawn_PathFollower.CostToMoveIntoCell`. Measured at rough
 **0.001% of the tick budget**: the postfix fires 0.4–0.6 times per tick at about
 400 ns a call. It is not in the pathfinding loop.
 
-See [TEST_RESULTS.md](TEST_RESULTS.md) for the measurements and
-[TESTING.md](TESTING.md) for how to reproduce them.
+See the [wiki](https://github.com/archdukejim/dynamic-walk-speed/wiki) for the
+measurements and how to reproduce them.
+
+## Documentation
+
+Everything lives on the [wiki](https://github.com/archdukejim/dynamic-walk-speed/wiki)
+rather than in the shipped mod folder, so players can read it without digging
+through game files:
+
+- **[Speed Table](https://github.com/archdukejim/dynamic-walk-speed/wiki/Speed-Table)**
+  — every creature on every floor, measured in game
+- **[Test Results](https://github.com/archdukejim/dynamic-walk-speed/wiki/Test-Results)**
+  — the 48-case verification run and the performance figures
+- **[Testing Methodology](https://github.com/archdukejim/dynamic-walk-speed/wiki/Testing-Methodology)**
+  — how to reproduce any of it
 
 ## Known limits
 

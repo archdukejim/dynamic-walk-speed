@@ -85,6 +85,11 @@ Works with Vehicle Framework, and with Vanilla Vehicles Expanded on top of it. V
 
 Safe to add or remove mid save. Nothing is stored on your pawns or your map, so removing the mod puts every speed straight back to vanilla. Modded weather, modded floors, modded animals and modded apparel are all read from the game's own defs and need no compatibility patch.
 
+--- WIKI AND DOCUMENTATION ---
+https://github.com/archdukejim/dynamic-walk-speed/wiki
+
+Every number here was measured in game rather than estimated, and the wiki is where the workings live. The Speed Table page lists what every creature actually does on every floor, with vanilla and modded ticks side by side, so if you want to know whether flooring your barn helps or hurts your muffalo it is one table rather than a dig through the mod folder. Test Results carries the full verification run and the measured performance figures, and Testing Methodology covers reproducing any of it yourself.
+
 --- PLANNED FOR 1.0 ---
 Pathfinding preference. At the moment this mod changes how fast a pawn crosses a cell, not which cell it picks, so your colonists move quickly down a paved corridor but will still cut across the mud if that is the shorter line. The 1.0 release is meant to close that gap, so humanlike pawns route toward manufactured floors and packed dirt the way people naturally follow a path, while animals keep ignoring it and go where they please.
 
