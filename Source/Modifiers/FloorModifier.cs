@@ -57,8 +57,9 @@ namespace DynamicWalkSpeeds.Modifiers
 
         internal static bool ResolveManufactured(TerrainDef terrain)
         {
-            return terrain.generated ||
-                   terrain.designationCategory != null ||
+            // Deliberately not terrain.generated: TerrainDefGenerator_Stone sets it on every
+            // runtime stone terrain, so it flags natural rough-hewn rock as a built floor.
+            return terrain.designationCategory != null ||
                    (terrain.researchPrerequisites != null && terrain.researchPrerequisites.Count > 0) ||
                    (terrain.defName != null && (terrain.defName.Contains("Tile") || terrain.defName.Contains("Concrete") || terrain.defName.Contains("Carpet") || terrain.defName.Contains("Smooth")));
         }

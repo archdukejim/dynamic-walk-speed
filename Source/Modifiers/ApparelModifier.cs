@@ -225,6 +225,11 @@ namespace DynamicWalkSpeeds.Modifiers
             if (pawn == null || terrain == null || !settings.enableBarefootPenalty)
                 return 1.0f;
 
+            // Humanlike only, matching the mood and injury paths. A mechanoid has an apparel
+            // tracker but no feet to hurt, and would otherwise read as permanently barefoot.
+            if (pawn.RaceProps == null || !pawn.RaceProps.Humanlike)
+                return 1.0f;
+
             float coverage = GetBestCoverage(pawn, settings);
             if (coverage < 0f)
                 return 1.0f;
