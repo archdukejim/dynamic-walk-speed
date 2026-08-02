@@ -22,15 +22,22 @@ namespace DynamicWalkSpeeds.Modifiers
             if (curWeather == null)
                 return 1.0f;
 
+            if (SpeedTables.TryWeather(curWeather, out float tabled))
+                return tabled;
+
             if (weatherCache.TryGetValue(curWeather, out float cached))
                 return cached;
 
-            float result = settings.weatherMultipliers.TryGetValue(curWeather.defName, out float mult)
-                ? mult
-                : GetDefaultWeatherMultiplier(curWeather);
-
+            float result = ResolveWeatherMultiplier(curWeather, settings);
             weatherCache[curWeather] = result;
             return result;
+        }
+
+        internal static float ResolveWeatherMultiplier(WeatherDef weather, DynamicWalkSpeedsSettings settings)
+        {
+            return settings.weatherMultipliers.TryGetValue(weather.defName, out float mult)
+                ? mult
+                : GetDefaultWeatherMultiplier(weather);
         }
 
         public static float GetDefaultWeatherMultiplier(WeatherDef weather)

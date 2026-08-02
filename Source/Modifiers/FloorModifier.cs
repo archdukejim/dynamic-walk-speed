@@ -18,6 +18,9 @@ namespace DynamicWalkSpeeds.Modifiers
             if (terrain == null || !settings.enableFloorModifiers)
                 return 1.0f;
 
+            if (SpeedTables.TryTerrain(terrain, out SpeedTables.TerrainRow row))
+                return row.floorMult;
+
             if (multCache.TryGetValue(terrain, out float cached))
                 return cached;
 
@@ -26,7 +29,7 @@ namespace DynamicWalkSpeeds.Modifiers
             return result;
         }
 
-        private static float ResolveFloorMultiplier(TerrainDef terrain, DynamicWalkSpeedsSettings settings)
+        internal static float ResolveFloorMultiplier(TerrainDef terrain, DynamicWalkSpeedsSettings settings)
         {
             if (settings.floorMultipliers.TryGetValue(terrain.defName, out float mult))
             {
@@ -41,6 +44,9 @@ namespace DynamicWalkSpeeds.Modifiers
         {
             if (terrain == null) return false;
 
+            if (SpeedTables.TryTerrain(terrain, out SpeedTables.TerrainRow row))
+                return row.manufactured;
+
             if (manufacturedCache.TryGetValue(terrain, out bool cached))
                 return cached;
 
@@ -49,7 +55,7 @@ namespace DynamicWalkSpeeds.Modifiers
             return result;
         }
 
-        private static bool ResolveManufactured(TerrainDef terrain)
+        internal static bool ResolveManufactured(TerrainDef terrain)
         {
             return terrain.generated ||
                    terrain.designationCategory != null ||

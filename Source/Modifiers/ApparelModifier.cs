@@ -201,13 +201,22 @@ namespace DynamicWalkSpeeds.Modifiers
         {
             if (terrain == null) return 1.00f;
 
+            if (SpeedTables.TryTerrain(terrain, out SpeedTables.TerrainRow row))
+                return row.barefootPenalty;
+
             if (barefootCache.TryGetValue(terrain, out float cached))
                 return cached;
 
+            float penalty = ResolveBarefootPenalty(terrain, settings);
+            barefootCache[terrain] = penalty;
+            return penalty;
+        }
+
+        internal static float ResolveBarefootPenalty(TerrainDef terrain, DynamicWalkSpeedsSettings settings)
+        {
             if (!settings.barefootPenalties.TryGetValue(terrain.defName, out float penalty))
                 penalty = GetDefaultBarefootPenalty(terrain);
 
-            barefootCache[terrain] = penalty;
             return penalty;
         }
 

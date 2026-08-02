@@ -35,6 +35,7 @@ namespace DynamicWalkSpeeds.Modifiers
         public static void InvalidateSettings()
         {
             anyEnabledValid = false;
+            SpeedTables.Invalidate();
 
             FloorModifier.InvalidateSettingsCache();
             WeatherModifier.InvalidateSettingsCache();

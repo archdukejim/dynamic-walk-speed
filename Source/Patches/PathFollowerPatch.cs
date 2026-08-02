@@ -20,6 +20,8 @@ namespace DynamicWalkSpeeds.Patches
             if (!SpeedCaches.AnyEnabled(settings))
                 return;
 
+            SpeedTables.EnsureBuilt(settings);
+
             Map map = pawn.Map;
             TerrainDef terrain = SpeedCaches.NeedsTerrain(settings) && c.InBounds(map) ? c.GetTerrain(map) : null;
 

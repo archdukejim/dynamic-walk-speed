@@ -32,6 +32,9 @@ namespace DynamicWalkSpeeds.Modifiers
         {
             if (def == null) return 1.00f;
 
+            if (SpeedTables.TryRace(def, out SpeedTables.RaceRow row))
+                return row.traction;
+
             if (tractionCache.TryGetValue(def, out float cached))
                 return cached;
 
@@ -43,6 +46,9 @@ namespace DynamicWalkSpeeds.Modifiers
         private static float GetSpeedCached(ThingDef def, DynamicWalkSpeedsSettings settings)
         {
             if (def == null) return 1.00f;
+
+            if (SpeedTables.TryRace(def, out SpeedTables.RaceRow row))
+                return row.speed;
 
             if (speedCache.TryGetValue(def, out float cached))
                 return cached;
