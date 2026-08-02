@@ -1,7 +1,10 @@
 # Testing Dynamic Walk Speeds
 
-Three dev-mode actions ship with the mod, under **Dynamic Walk Speeds** in the
+Four dev-mode actions ship with the mod, under **Dynamic Walk Speeds** in the
 debug actions menu (enable Development mode in Options first).
+
+Run **Clean map for testing** before benchmarking. Ambient fauna and flora
+skew the numbers and blur the results.
 
 ## Measure in ticks, not microseconds
 
@@ -62,8 +65,13 @@ Results accumulate into a sink so the loop cannot be optimised away.
 This measures the mod's own cost, not vanilla's. Run it twice: once with all
 modifiers on, once with them all off, to see the early-out path.
 
+Clean the map first. The chain includes the hostile pawn check, which walks
+every spawned pawn on a cache miss, so wildlife inflates the figure and makes
+runs incomparable.
+
 Note it reads the pawn's current cell, so standing your colonist on a filthy
-or snowy cell exercises the two scans that cannot be cached.
+or snowy cell exercises the two scans that cannot be cached. Do that
+deliberately if you want the worst case, not by accident.
 
 ## Paint terrain test strips
 
@@ -74,20 +82,39 @@ pawns cross boundaries.
 Terrains that do not exist in your modlist are skipped and logged rather than
 throwing, so the list is safe across different mod setups.
 
+## Clean map for testing (destructive)
+
+Destroys every plant, wild and hostile pawn, item, corpse, chunk and filth
+pile on the map, removes non-player buildings, clears all snow, and flushes
+the mod's caches. Your own colonists, animals and buildings are kept, as is
+natural rock. It asks for confirmation first, and it cannot be undone: use a
+throwaway colony.
+
+**This matters most for the benchmark.** `HasActiveHostilePawns` iterates
+every spawned pawn on the map, so a map full of ambient wildlife inflates
+exactly the scan the caching work targets, and any stray filth on the pawn's
+cell exercises the one per-cell scan that cannot be cached. Benchmarking on a
+lived-in map measures the wildlife, not the mod.
+
+It matters much less for the speed table, which calls the modifiers directly
+against a terrain and a race and never touches cell contents.
+
+Snow is cleared for the same reason: with snow present the vanilla tick
+addend is in play, and you want that isolated rather than mixed into a
+baseline.
+
 ## Building a clean test map
 
-Map cleanliness matters far less than you would expect, because both tools
-call the modifiers **directly** rather than timing a walking pawn. Only the
-filth and snow reads touch cell contents at all.
-
-If you do want a controlled map:
-
 1. Start a new colony on a flat, low-vegetation biome. Sea ice or extreme
-   desert give you an almost empty map without any clearing.
-2. Enable Development mode, then use the terrain strip painter where you want
-   the test lanes.
-3. Spawn the animals you want with the pawn spawner. The race list below is
-   already one representative per populated traction group.
+   desert give you an almost empty map to begin with.
+2. Enable Development mode and run **Clean map for testing**.
+3. Use the terrain strip painter where you want the test lanes.
+4. Spawn the animals you want with the pawn spawner. The race list below is
+   one representative per populated traction group.
+
+Re-run the cleaner between benchmark passes. Plants regrow, filth
+accumulates, and wildlife wanders in, so a long session drifts away from the
+baseline you started with.
 
 ## What is covered
 

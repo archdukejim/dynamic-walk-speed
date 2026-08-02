@@ -159,6 +159,76 @@ namespace DynamicWalkSpeeds.Debugging
             Log.Message($"[DWS] Painted {terrains.Count} terrain strips of {StripLength} cells from {origin}.");
         }
 
+        [DebugAction("Dynamic Walk Speeds", "Clean map for testing", allowedGameStates = AllowedGameStates.PlayingOnMap)]
+        public static void CleanMapForTesting()
+        {
+            Map map = Find.CurrentMap;
+            if (map == null) return;
+
+            Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
+                "Dynamic Walk Speeds test cleanup.\n\nThis destroys every plant, wild and hostile pawn, item, corpse, chunk, filth pile and non-player building on this map, and clears all snow.\n\nYour own colonists, animals and buildings are kept. Natural rock is kept.\n\nThis cannot be undone. Use it on a throwaway test colony.",
+                () => CleanMap(map),
+                true));
+        }
+
+        private static void CleanMap(Map map)
+        {
+            int plants = DestroyGroup(map, ThingRequestGroup.Plant);
+            int filth = DestroyGroup(map, ThingRequestGroup.Filth);
+            int items = DestroyGroup(map, ThingRequestGroup.HaulableEver);
+
+            List<Pawn> doomed = new List<Pawn>();
+            foreach (Pawn p in map.mapPawns.AllPawnsSpawned)
+            {
+                if (p != null && p.Faction != Faction.OfPlayer)
+                    doomed.Add(p);
+            }
+            for (int i = 0; i < doomed.Count; i++)
+            {
+                if (!doomed[i].Destroyed) doomed[i].Destroy(DestroyMode.Vanish);
+            }
+
+            List<Thing> ruins = new List<Thing>();
+            foreach (Thing t in map.listerThings.ThingsInGroup(ThingRequestGroup.BuildingArtificial))
+            {
+                if (t != null && t.Faction != Faction.OfPlayer) ruins.Add(t);
+            }
+            for (int i = 0; i < ruins.Count; i++)
+            {
+                if (!ruins[i].Destroyed) ruins[i].Destroy(DestroyMode.Vanish);
+            }
+
+            int snowCells = 0;
+            foreach (IntVec3 cell in map.AllCells)
+            {
+                if (map.snowGrid.GetDepth(cell) > 0f)
+                {
+                    map.snowGrid.SetDepth(cell, 0f);
+                    snowCells++;
+                }
+            }
+
+            SpeedCaches.InvalidateSettings();
+
+            Log.Message(string.Format(
+                "[DWS] Map cleaned: {0} plants, {1} filth, {2} items and corpses, {3} non-player pawns, {4} non-player buildings, {5} snowy cells cleared. Mod caches flushed.",
+                plants, filth, items, doomed.Count, ruins.Count, snowCells));
+        }
+
+        private static int DestroyGroup(Map map, ThingRequestGroup group)
+        {
+            List<Thing> snapshot = new List<Thing>(map.listerThings.ThingsInGroup(group));
+            int count = 0;
+            for (int i = 0; i < snapshot.Count; i++)
+            {
+                Thing t = snapshot[i];
+                if (t == null || t.Destroyed) continue;
+                t.Destroy(DestroyMode.Vanish);
+                count++;
+            }
+            return count;
+        }
+
         private static Pawn MakeTestPawn(ThingDef race)
         {
             PawnKindDef kind = DWSTestSubjects.KindFor(race);
