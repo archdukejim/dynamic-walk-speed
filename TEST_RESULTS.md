@@ -202,12 +202,80 @@ This is considerably more than the ~120 ns figure used as an illustration in
 
 ---
 
+## Performance impact versus vanilla — measured
+
+Four timed runs, 4,000 game ticks each at Ultrafast on `-quicktest` maps.
+
+| Run | Modifiers | Pawns | TPS | Calls/tick |
+|---|---|---|---|---|
+| A | ON | 42 | 567.1 | 0.4 |
+| B | **OFF** | 49 | **437.6** | 0.4 |
+| C | ON | 77 | 372.5 | 0.6 |
+| D | ON | 54 | 481.4 | 0.6 |
+
+### The A/B cannot resolve the mod, and that is the answer
+
+The modifiers-**off** run was **slower** than the modifiers-on run. Identical
+on-configurations ranged 372.5 to 567.1 TPS — a **52% spread** — and the off
+run sits comfortably inside that band. TPS tracks pawn count (77 pawns gave
+372 TPS, 42 pawns gave 567), which is what actually drives the tick.
+
+The mod's cost is **below the noise floor** of an A/B at this scale. Anyone
+reporting a TPS delta from a single pair of runs is reporting map generation
+variance, not a mod.
+
+### The direct measurement
+
+| Quantity | Value |
+|---|---|
+| Postfix calls per tick | **0.4 – 0.6** (measured) |
+| Cost per call | **~400 ns** (measured) |
+| Cost per tick | **0.00016 – 0.00024 ms** |
+| Tick budget at 60 TPS | 16.67 ms |
+| **Share of the tick budget** | **~0.001%** |
+
+### Why the call rate is so low
+
+`Pawn_PathFollower.CostToMoveIntoCell` fires **once per pawn per cell
+entered**, and a pawn spends roughly 13 ticks crossing a cell. So the call rate
+is bounded by *actively moving pawns ÷ ~13*, not by pawn count, colony size or
+map size. With 42 pawns mostly idle, 0.4 calls per tick is exactly that
+arithmetic.
+
+**The mod is not in the pathfinding loop.** RimWorld's `PathFinder` uses its
+own `CalculatedCostAt`, a different method this mod does not touch. If path
+computation went through the patched method, a single 100-cell route would
+generate hundreds of calls and the measured rate would be orders of magnitude
+higher. It is not.
+
+Scaling that structurally: even 200 pawns all moving at once — a mega-colony
+mid-raid — gives about 15 calls per tick, or **0.006 ms**, roughly **0.04%** of
+a 60 TPS budget.
+
+### Gameplay consequence worth knowing
+
+Because the mod changes movement cost and not pathfinding cost, pawns
+**traverse** a paved corridor faster but do not **prefer** it when choosing a
+route. They will still cut across the mud if it is geometrically shorter. Making
+them route around it would mean patching `PathFinder`, which is a far hotter
+path and is not something this mod does.
+
+### Honest limits on these numbers
+
+- `-quicktest` maps, 42 to 77 pawns. A mature colony has more pawns but not
+  proportionally more *moving* pawns.
+- The benchmark pawn stood on clean, snow-free ground, so the filth scan and
+  the snow read were both on their cheap paths.
+- The hostile-pawn scan was never under raid pressure, though it is cached per
+  map and faction specifically so a raid cannot make it expensive.
+- 400 ns/call is a tight-loop figure with everything warm in cache. In the real
+  tick the cache lines are colder, so treat it as a floor.
+
 ## Still not measured
 
 | Test | Why not |
 |---|---|
-| Calls per tick in a real colony | Needs the 5 minute tick profile on a lived-in save |
-| Sustained TPS impact | Same. Cost per tick = calls/tick x 400 ns |
+| Calls per tick on a mature colony | Measured at 0.4-0.6 on quicktest maps; a lived-in save would confirm the scaling |
 | Weather, filth, snow, territory multipliers | Depend on live map state; the suite covers the deterministic per-def values only |
 | Footwear traction and quality scaling | Needs real apparel instances with quality; `-quicktest` colonists were stripped |
 | Mood, sore feet, foot injury | Need hours of game time |

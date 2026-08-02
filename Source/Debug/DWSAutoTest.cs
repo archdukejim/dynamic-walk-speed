@@ -15,15 +15,22 @@ namespace DynamicWalkSpeeds.Debugging
     public class DWSAutoTest : GameComponent
     {
         private const string TestArg = "dws-test";
+        private const string OffArg = "dws-off";
         private const int WarmupFrames = 30;
         private const int ForceExitFrames = 240;
+        private const int TimedTicks = 4000;
 
         private static int passed, failed;
 
         private bool armed;
+        private bool modifiersOff;
+        private bool suiteDone;
         private bool completed;
         private int framesWaited;
         private int framesSinceShutdown = -1;
+
+        private int timingStartTick = -1;
+        private System.Diagnostics.Stopwatch timingClock;
 
         public DWSAutoTest(Game game) { }
 
@@ -33,7 +40,28 @@ namespace DynamicWalkSpeeds.Debugging
             if (!GenCommandLine.CommandLineArgPassed(TestArg)) return;
 
             armed = true;
-            Log.Message($"[SYNAPSE-TEST] DWS auto-test armed (-{TestArg}); warming up {WarmupFrames} frames.");
+            modifiersOff = GenCommandLine.CommandLineArgPassed(OffArg);
+
+            if (modifiersOff)
+            {
+                DynamicWalkSpeedsSettings s = DynamicWalkSpeedsMod.settings;
+                if (s != null)
+                {
+                    s.enableWeatherModifiers = false;
+                    s.enableFloorModifiers = false;
+                    s.enableSurfacePenalties = false;
+                    s.enableTerritoryModifiers = false;
+                    s.enableCreatureModifiers = false;
+                    s.enableFootwearTraction = false;
+                    s.enableBarefootPenalty = false;
+                    SpeedCaches.InvalidateSettings();
+                }
+                Log.Message($"[SYNAPSE-TEST] DWS auto-test armed with ALL MODIFIERS OFF (-{OffArg}); postfix will early-out.");
+            }
+            else
+            {
+                Log.Message($"[SYNAPSE-TEST] DWS auto-test armed (-{TestArg}); warming up {WarmupFrames} frames.");
+            }
         }
 
         public override void GameComponentUpdate()
@@ -52,10 +80,46 @@ namespace DynamicWalkSpeeds.Debugging
             }
 
             if (framesWaited < WarmupFrames) { framesWaited++; return; }
+
+            if (!suiteDone)
+            {
+                suiteDone = true;
+
+                if (!modifiersOff)
+                {
+                    try { RunAll(); }
+                    catch (Exception e) { Fail("harness", e.ToString()); }
+                }
+
+                // Timed phase: let the colony run and count how often the postfix fires.
+                DWSProfiler.Calls = 0;
+                DWSProfiler.Active = true;
+                timingStartTick = Find.TickManager.TicksGame;
+                timingClock = System.Diagnostics.Stopwatch.StartNew();
+
+                Find.TickManager.CurTimeSpeed = TimeSpeed.Ultrafast;
+                Log.Message($"[SYNAPSE-TEST] timing phase started for {TimedTicks} ticks at Ultrafast (modifiers {(modifiersOff ? "OFF" : "ON")}).");
+                return;
+            }
+
+            int elapsedTicks = Find.TickManager.TicksGame - timingStartTick;
+            if (elapsedTicks < TimedTicks) return;
+
+            timingClock.Stop();
+            DWSProfiler.Active = false;
             completed = true;
 
-            try { RunAll(); }
-            catch (Exception e) { Fail("harness", e.ToString()); }
+            double seconds = timingClock.Elapsed.TotalSeconds;
+            double tps = seconds > 0 ? elapsedTicks / seconds : 0;
+            double callsPerTick = elapsedTicks > 0 ? (double)DWSProfiler.Calls / elapsedTicks : 0;
+            double msPerTick = callsPerTick * 400.0 / 1000000.0;
+
+            int pawns = 0;
+            foreach (Map m in Find.Maps) pawns += m.mapPawns?.AllPawnsSpawned?.Count ?? 0;
+
+            Log.Message(string.Format(
+                "[SYNAPSE-TEST] TIMING mode={0} ticks={1} wallSec={2:F2} tps={3:F1} calls={4} callsPerTick={5:F1} pawns={6} estMsPerTick={7:F4}",
+                modifiersOff ? "OFF" : "ON", elapsedTicks, seconds, tps, DWSProfiler.Calls, callsPerTick, pawns, msPerTick));
 
             Log.Message($"[SYNAPSE-TEST] SUMMARY passed={passed} failed={failed} skipped=0");
 
