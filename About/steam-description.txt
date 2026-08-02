@@ -1,6 +1,12 @@
 Steam Workshop description for Dynamic Walk Speeds.
 Workshop item 3775191933 - https://steamcommunity.com/sharedfiles/filedetails/?id=3775191933
 
+*** HARD LIMIT: 8000 CHARACTERS ***
+Steam's description textarea carries maxlength="8000". Anything longer is
+silently rejected: the edit form accepts the POST, reports success, and the live
+description does not change. Check the length of the body below before pasting.
+Depth belongs on the wiki, not here.
+
 Steam uses BBCode, not Markdown. Paste everything below the line into the
 Workshop item's description field.
 
@@ -36,218 +42,103 @@ A colonist crossing a swept concrete corridor and a colonist wading through knee
 
 [h2]How it works[/h2]
 
-Four modifiers are read per cell and [b]multiplied together[/b], so a paved hallway in the rain is still faster than mud in the rain. Above [b]1.00x[/b] is faster than vanilla, below it is slower. Every value is a slider and every modifier can be switched off on its own.
-
-[b]➤ Want the actual numbers? [url=https://github.com/archdukejim/dynamic-walk-speed/wiki/Speed-Table]Read the Speed Table[/url][/b] — every creature on every floor, vanilla and modded ticks side by side, measured in game. It answers "does flooring my barn help or hurt my muffalo" in one table. (It hurts, by about 10%.)
+Five modifiers are read per cell and [b]multiplied together[/b], so a paved hallway in the rain is still faster than mud in the rain. Above [b]1.00x[/b] is faster than vanilla, below it is slower. Every value is a slider and every modifier can be switched off on its own.
 
 [list]
 [*][b]Weather[/b] - drizzle barely registers, a blizzard drags.
 [*][b]Floors[/b] - the corridor you paved is now worth paving.
 [*][b]Creature traction[/b] - and that paved corridor is worth nothing to a guinea pig.
-[*][b]Snow and filth[/b] - the game's own snow penalty dialled 0% to 1000%, and filth charged by the unit.
+[*][b]Snow and filth[/b] - the game's own snow penalty dialled 0% to 1000%, filth charged by the unit.
 [*][b]Hostile territory[/b] - enemy ground puts an edge in every step.
 [/list]
 
-[h2]Weather[/h2]
+[h2]➤ The numbers are all published[/h2]
 
-Every weather in your game gets its own multiplier from [b]0.50x to 1.50x[/b], and the list fills itself in from what that weather actually does: rain costs 10 percent at full rate, snowfall costs 15 percent. So a light shower is a rounding error and a full blizzard genuinely changes how your day runs. Modded weather is picked up automatically and seeded the same way.
+[b][url=https://github.com/archdukejim/dynamic-walk-speed/wiki/Speed-Table]Read the Speed Table[/url][/b] - every creature on every floor, vanilla and modded ticks side by side, measured in game rather than estimated.
 
-[h2]Floors[/h2]
-
-Every terrain gets a multiplier from [b]0.50x to 2.00x[/b]. Manufactured ground starts at [b]1.15x[/b] and natural ground at [b]1.00x[/b], which finally gives you a reason to floor a hallway that is not just beauty and cleanliness. Anything you built, anything that needed research, and anything smoothed counts as manufactured, so modded floors are picked up without a patch.
-
-[b]Master Floor Scale[/b] moves every floor at once from 0.50x to 2.00x. Keep it linked to preserve the ranking while dialling the whole system up or down, or unlink it and tune floors one at a time.
+It answers "does flooring my barn help or hurt my muffalo" in one table. [i]It hurts, by about 10%.[/i]
 
 [h2]Creature traction[/h2]
 
-A booted colonist gets everything a paved corridor has to offer. A horse slips on it. A guinea pig, an animal that spent its entire evolutionary history digging its nails into soil, gets nothing from it at all, because there is nothing on a smooth tile for those nails to grip.
+A booted colonist gets everything a paved corridor has to offer. A horse slips on it. A guinea pig, an animal that spent its entire evolutionary history digging its nails into soil, gets nothing from it at all, because there is nothing on smooth tile for those nails to grip.
 
-[b]Traction[/b] decides how much of the floor bonus a creature can actually use:
+[b]Traction[/b] decides how much of a floor's bonus a creature can actually use:
 
 [list]
-[*][b]1.00x[/b] - takes the full floor bonus. Colonists, boots on.
+[*][b]1.00x[/b] - takes the full bonus. Colonists, boots on.
 [*][b]0.00x[/b] - flooring does nothing for this creature either way.
 [*][b]Below zero[/b] - the bonus inverts and the floor becomes a penalty. Your 1.15x paved tile reads as [b]0.89x[/b] to a guinea pig.
 [/list]
 
-Natural ground is never touched by traction, so nothing here changes how anything crosses dirt or grass. This is strictly about what you built.
+Natural ground is never touched by traction. This is strictly about what you built.
 
 [h3]Grouped by the game's own data[/h3]
 
-No hand written species list to go stale. Creatures are classified on two axes at once, both read straight off the race:
+No hand written species list to go stale. Creatures are classified on two axes read straight off the race: [b]body type[/b] from race.body, and [b]size band[/b] from base body size. Measured in game with all DLCs loaded that is [b]20 populated groups over 312 races[/b], and only 4% fall through untreated.
 
-[list]
-[*][b]Body type[/b] from race.body - Hoofed, Padded, Taloned, Insectoid, Shelled, Serpentine, Mechanoid, Humanlike, Other.
-[*][b]Size band[/b] from base body size - Small under 0.5, Medium under 1.5, Large above.
-[/list]
+The size axis is what earns its keep: the game calls a 0.2 guinea pig and a 4.0 megasloth both "paws", and they come out with traction of [i]opposite sign[/i].
 
-Measured in game with the base game and all DLCs loaded, that comes out at [b]20 populated groups over 312 races[/b], and the size axis is what earns its keep: the game calls a 0.2 guinea pig and a 4.0 bear both "paws". Only one of them should be sliding around your kitchen.
+[b]Modded animals classify themselves[/b] with no patch, including those shipping a custom body. Any individual creature can be ticked open and given its own values.
 
-Hooves slip on smooth flooring and slip harder the heavier the animal. Small padded animals fare worst of anything alive. Mechanoids prefer flat manufactured ground to broken earth and are the only group that gets [i]more[/i] than a colonist does.
+[h2]Snow, filth and territory[/h2]
 
-[h3]Per creature overrides[/h3]
+[b]Snow does not get a second system bolted onto it.[/b] The game already slows pawns for snow depth, so this scales what the game already does, from [b]0% to 1000%[/b]. At 100% it is vanilla; at 0% the snow penalty is gone entirely, which is worth knowing if you have always found winter tedious. In 1.6 that covers sand too.
 
-Because the grouping is read from race data, [b]modded animals classify themselves[/b] with no patch. And any individual creature can be ticked open and given its own traction and speed, overriding whatever its group says. Worth knowing: a cat and a guinea pig both land in Padded Small. If you think a cat should keep its footing indoors, override the cat.
+[b]Filth is charged by how much is in the cell[/b], counting the thickness the game tracks rather than the number of piles. 1% slower per unit at 100%.
 
-[h3]Flat speed[/h3]
-
-Every group also carries a plain speed multiplier from [b]0.25x to 2.00x[/b] that applies everywhere, not just on flooring, for when a species should simply be quicker or slower across the board.
+[b]Hostile territory[/b] costs 0.90x by default, triggered by enemy owned tiles, live enemies, or both. [b]Fleeing pawns drop it entirely[/b] - a rout should be a rout, not a slow walk home.
 
 [h2]Footwear[/h2]
 
-Boots earn their keep in two places, and the bigger one is not the paved corridor.
+Boots add a small traction bonus on manufactured floors, scaled by their [b]quality[/b] on the usual seven step scale. You choose which body part group counts as the traction slot, and every item occupying it gets its own value.
 
-[b]On a manufactured floor they are a small gain[/b] - 0.25x per item by default, added to that pawn's traction. Tile is already easy going. There is not much left for good boots to add.
+[i]Vanilla ships no footwear, so this sits idle until a mod adds some. Vanilla Apparel Expanded is one that does.[/i]
 
-[h3]Barefoot penalties — EXPERIMENTAL, off by default[/h3]
-
-[b]Everything from here to the end of this section ships disabled and is being finished for 1.0.[/b] It is the only part of the mod that adds content and damages pawns, and it has not been through real play, so it is opt in rather than on by default. Turn it on in the Footwear tab if you want to try it.
-
-[b]On ground that hurts to walk on, boots are the whole difference.[/b] A pawn that could be wearing footwear and is not takes a barefoot penalty that depends on what it is standing on:
-
-[list]
-[*][b]0.85x[/b] on rough stone
-[*][b]0.88x[/b] on gravel, scree and rubble
-[*][b]0.90x[/b] on ice
-[*][b]0.92x[/b] on broken asphalt
-[*][b]No penalty at all[/b] on soil, grass, sand, or anything you built
-[/list]
-
-Put boots on and it goes away. [b]Animals are never penalised[/b] for being barefoot, because they cannot do anything about it - the check is whether the pawn could wear footwear in the first place.
-
-[b]Quality cuts both ways.[/b] Awful boots deliver half their traction, Legendary boots 1.75x of it, on the usual seven step scale. With [b]Footwear Quality Shields[/b] on, that same figure decides how much of the barefoot penalty the boots actually keep off you, so an awful pair only half protects you from the rough stone and a masterwork pair covers it entirely. Turn it off and any footwear at all shields completely. There is also an optional [b]condition[/b] toggle, off by default, that scales a worn out item down as it deteriorates.
-
-Every terrain's barefoot penalty is its own slider from 0.50x to 1.00x, with a master impact scale from 0x to 3x over the lot. Rough stone is generated by the game per rock type rather than written out in files, so the list is built at runtime and modded stone is covered too.
-
-[h3]And your colonists have opinions about it — also experimental and off[/h3]
-
-Three consequences, each with its own toggle, [b]all shipping disabled[/b], all humanlike only, and all skipped for [b]nudists[/b] unless you decide otherwise.
-
-[list]
-[*][b]Bare feet[/b] - a standing [b]-3[/b] mood penalty while a pawn has nothing on its feet, wherever it is.
-[*][b]Sore feet[/b] - a stacking [b]-2[/b] memory, gained once per in game hour spent barefoot on painful ground, up to five stacks at diminishing weight, fading over about ten hours.
-[*][b]Foot injuries[/b] - each in game hour barefoot on painful ground carries a [b]0.1% chance[/b] of a bruise or a small cut to one foot, picked at random from the feet that body actually has.
-[/list]
-
-Both mood values are sliders, and the injury chance goes up to 5% if you would rather it were a genuine hazard than a rare piece of texture. Your colonist limping in from the mountain corridor with a cut foot because nobody made boots is the point.
-
-[b]You choose what counts as the slot.[/b] The default is anything covering the [b]Feet[/b] body part group, which is what footwear mods use, but every body part group any apparel in your game touches is offered as a tick box. Decide that leg wear or a full body suit contributes and it will. Every individual item occupying the slot then gets its own slider, so an armoured boot and a soft moccasin need not be worth the same.
-
-Worth knowing up front: [b]vanilla RimWorld has no footwear[/b], so this tab sits idle until a mod adds some. [i]Vanilla Apparel Expanded[/i] is one that does.
-
-[h2]Vehicles[/h2]
-
-Vehicles from [b]Vehicle Framework[/b] are detected by type rather than by an assembly reference, so this mod neither requires it nor breaks without it. They get their own traction groups, banded by footprint instead of body size, defaulting to [b]1.50x[/b] - wheels and treads get more out of a paved road than boots ever will. Works the same with Vanilla Vehicles Expanded layered on top.
-
-[h2]Snow and filth[/h2]
-
-[b]Snow does not get a second system bolted onto it.[/b] The game already slows pawns for snow depth, so this scales what the game already does, from [b]0% to 1000%[/b]:
-
-[list]
-[*][b]100%[/b] - vanilla, untouched.
-[*][b]0%[/b] - the snow movement penalty is gone entirely. Worth knowing if you have always found winter tedious.
-[*][b]1000%[/b] - a drift is ten times the obstacle it was.
-[/list]
-
-In 1.6 that is the weather buildup penalty, so this covers sand as well as snow.
-
-[b]Filth is charged by how much is in the cell[/b], counting the thickness the game itself tracks rather than just the number of piles. [b]1% slower per unit at 100%[/b] - so a cell holding five units costs you 5%, and that same cell costs 50% at 1000%. An unswept workshop or a corridor tracked through with mud costs you real time and gives your cleaners something to earn. A cell never drops below 0.10x however filthy it gets.
-
-[h2]Hostile territory[/h2]
-
-Pawns move at [b]0.90x[/b] by default when the ground is not friendly, on a slider from 0.50x to 1.00x. Two things can trigger it:
-
-[list]
-[*][b]Hostile map tile[/b] - you are standing on ground owned by a faction hostile to you.
-[*][b]Live enemies present[/b] - anything hostile and still standing is on the map.
-[/list]
-
-Linked, either one is enough. Unlink them and you choose exactly which counts, so you can have the penalty bite when you assault an enemy base and never when a raid lands on your own doorstep.
-
-[b]Fleeing pawns drop the penalty entirely.[/b] Running for your life is the one moment the ground stops mattering, so a rout is a rout rather than a slow walk home. Covers both the flee job and the panic flee mental state, and can be switched off.
+[b]Experimental, shipped disabled:[/b] barefoot terrain penalties on rough stone, gravel and ice, plus a bare feet mood penalty, a stacking sore feet memory, and a rare foot injury. These are the only parts that add content and damage pawns, and they have not been through real play, so they are opt in until 1.0.
 
 [h2]Settings[/h2]
 
-Five tabs, everything live, nothing requiring a restart.
+Five tabs, everything live, nothing requiring a restart: [b]Weather[/b], [b]Floors[/b], [b]Territory and Surface[/b], [b]Creatures[/b] and [b]Footwear[/b]. Every section has its own enable toggle, so this happily runs as a floors only mod, or a traction only mod, with the rest left at vanilla.
 
-[list]
-[*][b]Weather[/b] - a scrollable list of every weather in your game.
-[*][b]Floors[/b] - the master scale plus a scrollable list of every terrain.
-[*][b]Territory and Surface[/b] - snow and filth impact scales, the hostile multiplier, and its two triggers.
-[*][b]Creatures[/b] - traction and speed per group, with an optional per creature override list underneath.
-[*][b]Footwear[/b] - barefoot penalties and their per terrain list, per item traction, the quality and condition toggles, and which body part groups count as a traction slot.
-[/list]
+[h2]Performance[/h2]
 
-Every section has its own enable toggle, so this happily runs as a floors only mod, or a traction only mod, with the rest left at vanilla.
+One Harmony postfix, measured at roughly [b]0.001% of the tick budget[/b]: it fires 0.4 to 0.6 times per tick at about 400 ns a call. Everything behind it is precomputed into flat lookup tables, and the hostile pawn sweep is cached per map and faction rather than walking every pawn for every cell.
+
+[url=https://github.com/archdukejim/dynamic-walk-speed/wiki/Test-Results]Full measurements and the 48 case verification run[/url].
 
 [h2]Compatibility[/h2]
 
 [list]
 [*][b]RimWorld 1.6.[/b]
-[*][b]Combat Extended: yes.[/b] CE changes the move speed [i]stat[/i] through encumbrance and bulk. This mod changes what a [i]cell[/i] costs to enter. They are separate layers and stack cleanly rather than fighting over the same value, so a heavily loaded CE pawn crossing snow is slowed by both, correctly, once each. No patch and no load order rule is needed, though this mod declares itself to load after CE regardless.
-[*][b]Safe to add or remove mid save.[/b] Nothing is written to your pawns or your map. Remove it and every speed goes straight back to vanilla.
-[*][b]Vehicle Framework: yes.[/b] Vehicles are detected by type rather than by an assembly reference, so the mod neither requires Vehicle Framework nor breaks without it. Where they do route through the vanilla move cost they get their own traction groups. Vanilla Vehicles Expanded rides along on the same handling.
-[*][b]Modded weather, floors, animals and apparel work out of the box.[/b] Every list is read from the game's own defs, so anything another mod adds shows up in settings with a sensible starting value. Animals classify by body name first and by the body's own parts as a fallback, so a mod shipping a custom body still lands in the right group.
-[*][b]Applies to everything that walks[/b] - your colonists and animals as much as the raiders coming at them. Flooring your base is an advantage on defence; so is leaving the approach unpaved. With traction on, a paved killbox is now worth rather less to the hoofed things running down it.
-[*][b]One patch, one method.[/b] The mod postfixes the per cell move cost and touches nothing else, which keeps it out of the way of mods that work on stats, pathfinding, or terrain generation.
-[*][b]Built to stay out of your tick.[/b] The move cost postfix runs constantly, so everything behind it is cached. Terrain, weather and race values are memoised per def rather than looked up by name on every cell. Worn footwear is scanned at most once a second per pawn instead of twice per cell. The hostile pawn sweep, which would otherwise walk every pawn on the map for every cell entered, is cached per map and per faction and short circuits entirely when the map tile alone already answers the question. Caches drop when you change a setting and are pruned hourly.
+[*][b]Combat Extended: yes.[/b] CE changes the move speed [i]stat[/i]; this changes what a [i]cell[/i] costs to enter. Separate layers, no shared patch target.
+[*][b]Vehicle Framework: yes.[/b] Detected by type, no assembly reference, no dependency either way.
+[*][b]Safe to add or remove mid save.[/b] Nothing is written to your pawns or your map.
+[*][b]Modded weather, floors, animals and apparel work out of the box[/b], all read from the game's own defs.
 [/list]
 
 [h2]Coming in 1.0: pathfinding preference[/h2]
 
-Right now this mod changes [i]how fast[/i] a pawn crosses a cell, not [i]which cell it picks[/i]. So your colonists move quickly down a paved corridor, but they will still cut across the mud if that is the shorter line.
+Right now this changes [i]how fast[/i] a pawn crosses a cell, not [i]which cell it picks[/i]. Your colonists move quickly down a paved corridor, but they will still cut across the mud on the shorter line.
 
-[b]1.0 is meant to close that gap[/b], so humanlike pawns route toward manufactured floors and packed dirt the way people naturally wear a path across a field, while animals carry on ignoring it and go where they please.
+1.0 closes that gap, so humanlike pawns route toward manufactured floors and packed dirt the way people wear a path across a field, while animals carry on going where they please. That is [i]pathfinding[/i] cost rather than [i]movement[/i] cost, and pathfinding is a far hotter piece of the game, so it gets its own release.
 
-That is a change to [i]pathfinding[/i] cost rather than [i]movement[/i] cost, and pathfinding is a far hotter piece of the game. It is being done deliberately and separately rather than rushed into this release.
+[h2]0.2 change log[/h2]
 
-[h2]Change log[/h2]
-
-[b]0.2[/b]
 [list]
-[*]Creature traction: how much of a floor's bonus a creature can actually use, from full benefit through indifference to an outright penalty. A guinea pig is measurably slower on concrete than on soil.
-[*]Creatures grouped by body type and size band, read from race data rather than a species list, so modded animals classify themselves. 20 populated groups over 312 races with all DLCs loaded.
-[*]Custom animal bodies from mods classify by their parts when the body name is unfamiliar.
-[*]Any individual creature can override its group, for both traction and a flat speed multiplier.
-[*]Footwear traction: boots and shoes add a small grip bonus on manufactured floors, and their quality scales how much. Any body part group can be nominated as the traction slot, and every item occupying it gets its own value. Optional condition scaling.
-[*][b]Experimental and shipped disabled, for 1.0:[/b] barefoot terrain penalties on rough stone, gravel and ice, a bare feet mood penalty, a stacking sore feet memory, and a rare chance of a bruised or cut foot.
-[*]Snow now scales the game's own movement penalty from 0% to 1000% rather than adding a second one of its own, which also covers sand in 1.6.
-[*]Filth is charged by the unit of thickness, 1% each at 100%, on the same 0% to 1000% scale.
+[*]Creature traction, grouped by body type and size band from race data.
+[*]Footwear traction scaled by quality.
+[*]Snow now scales the game's own penalty rather than adding a second one; filth charged by the unit.
 [*]Fleeing pawns drop the hostile territory penalty.
-[*]Vehicle Framework vehicles detected and given their own traction groups, banded by footprint.
-[*]Performance pass: every value that depends only on a def is precomputed into flat lookup tables, worn footwear is scanned at most once a second per pawn, and the hostile pawn sweep is cached per map and faction. Measured at roughly 0.001% of the tick budget.
-[*][b]Fixed:[/b] rough hewn natural rock was being treated as a built floor and given the manufactured bonus.
-[*][b]Fixed:[/b] mechanoids were taking a barefoot penalty on rough ground.
+[*]Vehicle Framework vehicles get their own traction groups.
+[*]Performance pass: flat lookup tables, cached pawn scans.
+[*][b]Fixed:[/b] rough hewn natural rock was treated as a built floor.
+[*][b]Fixed:[/b] mechanoids were taking a barefoot penalty.
 [/list]
 
-[b]Upgrading from 0.1:[/b] the snow and filth sliders keep their old names but no longer mean the same thing. Snow now scales the game's own penalty rather than adding a separate one, and filth is charged per unit of thickness rather than per pile. A value you set under 0.1 will behave differently, so give the Territory and Surface tab a look.
+[b]Upgrading from 0.1:[/b] the snow and filth sliders keep their old names but no longer mean the same thing, so give the Territory and Surface tab a look.
 
-[b]0.1[/b]
-[list]
-[*]Per weather speed multipliers, seeded from each weather's own rain and snow rate.
-[*]Per terrain speed multipliers, with manufactured ground faster than natural by default.
-[*]Master Floor Scale to move every floor at once.
-[*]Snow and filth surface penalties.
-[*]Hostile territory penalty, triggered by enemy owned tiles, live enemies, or both.
-[*]Every modifier independently switchable, every value on a slider.
-[/list]
+[h2]Wiki and source[/h2]
 
-[h2]Wiki and documentation[/h2]
-
-[b]https://github.com/archdukejim/dynamic-walk-speed/wiki[/b]
-
-Every number in this description was measured in game rather than estimated, and
-the wiki is where the workings live:
-
-[list]
-[*][b]Speed Table[/b] - what every creature actually does on every floor, with vanilla
-and modded ticks side by side. If you want to know whether flooring your barn helps
-or hurts your muffalo, it is one table.
-[*][b]Test Results[/b] - the full 48 case verification run, the bugs it caught, and the
-measured performance figures.
-[*][b]Testing Methodology[/b] - how to reproduce any of it yourself.
-[/list]
-
-[h2]Source[/h2]
+[b][url=https://github.com/archdukejim/dynamic-walk-speed/wiki]Wiki and documentation[/url][/b] - the Speed Table, the full test results, and how to reproduce any of it.
 
 MIT licensed: https://github.com/archdukejim/dynamic-walk-speed
