@@ -63,7 +63,9 @@ Vanilla RimWorld has no footwear at all, so this section sits idle until a mod a
 Vehicles from Vehicle Framework are detected without a hard dependency and get their own traction groups, banded by footprint rather than by body size, defaulting to 1.50x. Wheels and treads get more out of a paved road than boots ever will. If Vehicle Framework is not installed, or if it routes its vehicles around the vanilla move cost entirely, this simply never comes up.
 
 --- SNOW AND FILTH ---
-Snow is charged by depth, so a light dusting is nothing and a drift is punishing. Filth is charged per pile in the cell, which means an unswept workshop or a corridor tracked through with mud genuinely costs you time and gives your cleaners something to earn. Together they can take a cell down to 0.30x at worst, never above 1.00x. Each has its own impact scale from 0x to 3x, so you can turn snow off and leave filth on, or make either one brutal.
+Snow does not get a second system layered on top of it. The game already slows pawns down for snow depth, so this simply scales what the game already does, from 0 percent to 1000 percent. At 100 percent snow behaves exactly as vanilla. At 0 percent the snow movement penalty is gone entirely, which is worth knowing if you have always thought winter was tedious. At 1000 percent a drift is ten times the obstacle it was. In 1.6 that is the weather buildup penalty, so this covers sand as well as snow.
+
+Filth is charged by how much of it is in the cell rather than how many piles, counting the thickness the game itself tracks. One percent slower per unit at 100 percent, so a cell holding five units of filth costs you five percent, and the same cell costs fifty percent at 1000 percent. An unswept workshop or a corridor tracked through with mud genuinely costs you time and gives your cleaners something to earn. A cell never drops below 0.10x however filthy it gets.
 
 --- HOSTILE TERRITORY ---
 Pawns move at 0.90x by default when the ground is not friendly, on a slider from 0.50x to 1.00x. Two things can trigger it: standing on a map tile owned by a faction hostile to you, or simply having a live enemy on the map. Linked, either one is enough. Unlink them and you can pick exactly which one counts, so you can have the penalty apply on enemy bases only and never during a raid on your own colony.
@@ -82,6 +84,8 @@ Safe to add or remove mid save. Nothing is stored on your pawns or your map, so 
 
 --- CHANGE LOG ---
 1.2
+  - Snow now scales the game's own movement penalty from 0 to 1000 percent rather than adding a second one of its own.
+  - Filth is charged by the unit of thickness, 1 percent each at 100 percent, on the same 0 to 1000 percent scale.
   - Fleeing pawns drop the hostile territory penalty.
   - Caching pass: terrain, weather and race values are memoised per def, worn footwear is scanned at most once a second per pawn, and the hostile pawn sweep is cached per map and faction instead of running for every cell entered.
   - Barefoot terrain penalties: rough stone, gravel and ice punish a pawn with nothing on its feet, and boots take that away.

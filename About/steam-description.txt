@@ -21,7 +21,7 @@ Four modifiers are read per cell and [b]multiplied together[/b], so a paved hall
 [*][b]Weather[/b] - drizzle barely registers, a blizzard drags.
 [*][b]Floors[/b] - the corridor you paved is now worth paving.
 [*][b]Creature traction[/b] - and that paved corridor is worth nothing to a guinea pig.
-[*][b]Snow and filth[/b] - charged by depth and by the pile.
+[*][b]Snow and filth[/b] - the game's own snow penalty dialled 0% to 1000%, and filth charged by the unit.
 [*][b]Hostile territory[/b] - enemy ground puts an edge in every step.
 [/list]
 
@@ -114,9 +114,17 @@ Vehicles from [b]Vehicle Framework[/b] are detected by type rather than by an as
 
 [h2]Snow and filth[/h2]
 
-Snow is charged [b]by depth[/b], so a dusting is nothing and a drift is punishing. Filth is charged [b]per pile in the cell[/b], which means an unswept workshop or a corridor tracked through with mud costs you real time and gives your cleaners something to earn. Together they bottom out at [b]0.30x[/b] and never push above 1.00x.
+[b]Snow does not get a second system bolted onto it.[/b] The game already slows pawns for snow depth, so this scales what the game already does, from [b]0% to 1000%[/b]:
 
-Each has its own impact scale from [b]0x to 3x[/b], so you can switch snow off and leave filth on, or make either one brutal.
+[list]
+[*][b]100%[/b] - vanilla, untouched.
+[*][b]0%[/b] - the snow movement penalty is gone entirely. Worth knowing if you have always found winter tedious.
+[*][b]1000%[/b] - a drift is ten times the obstacle it was.
+[/list]
+
+In 1.6 that is the weather buildup penalty, so this covers sand as well as snow.
+
+[b]Filth is charged by how much is in the cell[/b], counting the thickness the game itself tracks rather than just the number of piles. [b]1% slower per unit at 100%[/b] - so a cell holding five units costs you 5%, and that same cell costs 50% at 1000%. An unswept workshop or a corridor tracked through with mud costs you real time and gives your cleaners something to earn. A cell never drops below 0.10x however filthy it gets.
 
 [h2]Hostile territory[/h2]
 
@@ -162,6 +170,8 @@ Every section has its own enable toggle, so this happily runs as a floors only m
 
 [b]1.2[/b]
 [list]
+[*]Snow now scales the game's own movement penalty from 0% to 1000% rather than adding a second one of its own.
+[*]Filth is charged by the unit of thickness, 1% each at 100%, on the same 0% to 1000% scale.
 [*]Fleeing pawns drop the hostile territory penalty.
 [*]Caching pass: per def memoisation for terrain, weather and race, per pawn footwear scanned once a second, and the hostile pawn sweep cached per map and faction.
 [*]Barefoot terrain penalties: rough stone, gravel and ice punish a pawn with nothing on its feet, and boots take that away.

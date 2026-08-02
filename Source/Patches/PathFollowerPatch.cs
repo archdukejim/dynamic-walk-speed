@@ -28,16 +28,20 @@ namespace DynamicWalkSpeeds.Patches
             float weatherMult = WeatherModifier.GetWeatherMultiplier(map, settings);
             float floorMult = FloorModifier.GetFloorMultiplier(terrain, settings);
             floorMult = CreatureModifier.ApplyTraction(pawn, terrain, floorMult, settings);
-            float surfaceMult = SurfaceModifier.GetSurfaceMultiplier(map, c, settings);
+            float filthMult = SurfaceModifier.GetFilthMultiplier(map, c, settings);
             float territoryMult = TerritoryModifier.GetTerritoryMultiplier(pawn, settings);
             float creatureMult = CreatureModifier.GetSpeedMultiplier(pawn, settings);
             float barefootMult = ApparelModifier.GetBarefootMultiplier(pawn, terrain, settings);
 
-            float totalSpeedMultiplier = weatherMult * floorMult * surfaceMult * territoryMult * creatureMult * barefootMult;
+            float totalSpeedMultiplier = weatherMult * floorMult * filthMult * territoryMult * creatureMult * barefootMult;
             if (totalSpeedMultiplier <= 0.01f)
                 totalSpeedMultiplier = 0.01f;
 
+            __result += SurfaceModifier.GetSnowTickAdjustment(map, c, settings);
             __result /= totalSpeedMultiplier;
+
+            if (__result < 1f)
+                __result = 1f;
         }
     }
 }

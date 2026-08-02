@@ -11,8 +11,14 @@ namespace DynamicWalkSpeeds.Settings
             listing.CheckboxLabeled("Enable Surface Penalties", ref settings.enableSurfacePenalties);
             if (settings.enableSurfacePenalties)
             {
-                settings.snowPenaltyScale = listing.SliderLabeled($"Snow Penalty Impact ({settings.snowPenaltyScale:F2}x)", settings.snowPenaltyScale, 0.0f, 3.0f);
-                settings.filthPenaltyScale = listing.SliderLabeled($"Filth Penalty Impact ({settings.filthPenaltyScale:F2}x)", settings.filthPenaltyScale, 0.0f, 3.0f);
+                settings.snowPenaltyScale = listing.SliderLabeled(
+                    $"Snow Effectiveness ({(settings.snowPenaltyScale * 100f):F0}% of vanilla)",
+                    settings.snowPenaltyScale, 0.0f, 10.0f,
+                    tooltip: "Scales the game's own snow movement penalty. 0% removes it entirely, 100% leaves vanilla alone, 1000% makes it ten times as punishing.");
+                settings.filthPenaltyScale = listing.SliderLabeled(
+                    $"Filth Effectiveness ({(settings.filthPenaltyScale * 100f):F0}%)",
+                    settings.filthPenaltyScale, 0.0f, 10.0f,
+                    tooltip: "1% slower per unit of filth in the cell at 100%. A cell holding five units costs 5% at 100%, or 50% at 1000%.");
             }
 
             listing.Gap(15f);
