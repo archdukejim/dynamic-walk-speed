@@ -64,7 +64,11 @@ namespace DynamicWalkSpeeds.Debugging
             "Goose",
 
             "Megascarab",
+            "Megaspider",
+            "Spelopede",
+
             "Toughspike",
+            "StoneCrab",
 
             "Tortoise",
             "Seal",

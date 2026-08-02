@@ -216,10 +216,11 @@ in XML, so they are resolved by name at runtime and skipped if absent.
 | Hoofed medium | `Goat`, `Caribou` |
 | Hoofed large | `Muffalo`, `Cow`, `Bison`, `Elephant` |
 | Taloned | `Chicken`, `Duck`, `Goose` |
-| Insectoid | `Megascarab`, `Toughspike` |
+| Insectoid | `Megascarab`, `Megaspider`, `Spelopede` |
 | Shelled | `Tortoise`, `Seal`, `Walrus` |
 | Serpentine | `Cobra` |
 | Mechanoid | `Mech_Agrihand`, `Mech_Centurion` |
+| Other (fallback) | `Toughspike`, `StoneCrab` |
 
 `GuineaPig` and `Cat` are both Padded small and deliberately included together:
 they share a group and a default traction, which is the case for the per

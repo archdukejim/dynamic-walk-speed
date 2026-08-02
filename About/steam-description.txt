@@ -58,7 +58,7 @@ No hand written species list to go stale. Creatures are classified on two axes a
 [*][b]Size band[/b] from base body size - Small under 0.5, Medium under 1.5, Large above.
 [/list]
 
-That comes out at [b]18 populated groups[/b] across the base game and all DLCs, and the size axis is what earns its keep: the game calls a 0.2 guinea pig and a 4.0 bear both "paws". Only one of them should be sliding around your kitchen.
+That comes out at [b]21 populated groups[/b] across the base game and all DLCs, and the size axis is what earns its keep: the game calls a 0.2 guinea pig and a 4.0 bear both "paws". Only one of them should be sliding around your kitchen.
 
 Hooves slip on smooth flooring and slip harder the heavier the animal. Small padded animals fare worst of anything alive. Mechanoids prefer flat manufactured ground to broken earth and are the only group that gets [i]more[/i] than a colonist does.
 
