@@ -186,6 +186,10 @@ namespace DynamicWalkSpeeds.Modifiers
         {
             if (terrain == null) return 1.00f;
 
+            // Only ground you did not build can hurt to walk on. Without this, colour names
+            // collide with the terrain patterns below: the ice blue carpets all match "Ice".
+            if (FloorModifier.ResolveManufactured(terrain)) return 1.00f;
+
             string n = terrain.defName;
             if (n == null) return 1.00f;
 

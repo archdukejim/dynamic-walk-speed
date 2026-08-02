@@ -86,6 +86,95 @@ namespace DynamicWalkSpeeds.Debugging
                 Log.Warning("[DWS] Skipped (not present in this modlist): " + string.Join(", ", missing));
         }
 
+        [DebugAction("Dynamic Walk Speeds", "Dump reference tables (CSV)", allowedGameStates = AllowedGameStates.PlayingOnMap)]
+        public static void DumpReferenceTables()
+        {
+            DynamicWalkSpeedsSettings settings = DynamicWalkSpeedsMod.settings;
+            if (settings == null) return;
+
+            SpeedTables.EnsureBuilt(settings);
+
+            // ---- weather ----
+            StringBuilder w = new StringBuilder();
+            w.AppendLine("defName,label,rainRate,snowRate,multiplier,percentVsVanilla");
+            List<WeatherDef> weathers = DefDatabase<WeatherDef>.AllDefsListForReading;
+            for (int i = 0; i < weathers.Count; i++)
+            {
+                WeatherDef d = weathers[i];
+                float m = WeatherModifier.GetWeatherMultiplier(Find.CurrentMap, settings);
+                m = WeatherModifier.ResolveWeatherMultiplier(d, settings);
+                w.AppendLine(string.Join(",",
+                    d.defName,
+                    Quote(d.LabelCap),
+                    d.rainRate.ToString("F2"),
+                    d.snowRate.ToString("F2"),
+                    m.ToString("F3"),
+                    ((m - 1f) * 100f).ToString("F1")));
+            }
+            Write("DWS_WeatherTable.csv", w.ToString());
+
+            // ---- terrain ----
+            StringBuilder t = new StringBuilder();
+            t.AppendLine("defName,label,manufactured,floorMult,barefootPenalty,vanillaPathCost");
+            List<TerrainDef> terrains = DefDatabase<TerrainDef>.AllDefsListForReading;
+            for (int i = 0; i < terrains.Count; i++)
+            {
+                TerrainDef d = terrains[i];
+                t.AppendLine(string.Join(",",
+                    d.defName,
+                    Quote(d.LabelCap),
+                    FloorModifier.IsManufactured(d) ? "yes" : "no",
+                    FloorModifier.GetFloorMultiplier(d, settings).ToString("F3"),
+                    ApparelModifier.ResolveBarefootPenalty(d, settings).ToString("F2"),
+                    d.pathCost.ToString()));
+            }
+            Write("DWS_TerrainTable.csv", t.ToString());
+
+            // ---- snow / weather buildup ----
+            StringBuilder s = new StringBuilder();
+            s.AppendLine("depth,category,vanillaTicksAddOn");
+            for (float depth = 0f; depth <= 1.0001f; depth += 0.05f)
+            {
+                var cat = WeatherBuildupUtility.GetBuildupCategory(depth);
+                s.AppendLine(string.Join(",",
+                    depth.ToString("F2"),
+                    cat.ToString(),
+                    WeatherBuildupUtility.MovementTicksAddOn(cat).ToString()));
+            }
+            Write("DWS_SnowTable.csv", s.ToString());
+
+            // ---- filth ----
+            StringBuilder f = new StringBuilder();
+            f.AppendLine("defName,label,maxThickness,penaltyAtMaxThickness100pct");
+            List<ThingDef> things = DefDatabase<ThingDef>.AllDefsListForReading;
+            for (int i = 0; i < things.Count; i++)
+            {
+                ThingDef d = things[i];
+                if (d.filth == null) continue;
+                int maxT = d.filth.maxThickness;
+                f.AppendLine(string.Join(",",
+                    d.defName,
+                    Quote(d.LabelCap),
+                    maxT.ToString(),
+                    (SurfaceModifier.FilthPenaltyPerUnit * maxT * 100f).ToString("F0") + "%"));
+            }
+            Write("DWS_FilthTable.csv", f.ToString());
+
+            Log.Message($"[DWS] Reference tables written: {weathers.Count} weathers, {terrains.Count} terrains.");
+        }
+
+        private static string Quote(string s)
+        {
+            return "\"" + (s ?? "").Replace("\"", "'") + "\"";
+        }
+
+        private static void Write(string name, string content)
+        {
+            string path = Path.Combine(GenFilePaths.ConfigFolderPath, name);
+            try { File.WriteAllText(path, content); Log.Message("[DWS] wrote " + path); }
+            catch (Exception e) { Log.Error("[DWS] could not write " + name + ": " + e.Message); }
+        }
+
         [DebugAction("Dynamic Walk Speeds", "Benchmark modifier chain", allowedGameStates = AllowedGameStates.PlayingOnMap)]
         public static void BenchmarkModifiers()
         {

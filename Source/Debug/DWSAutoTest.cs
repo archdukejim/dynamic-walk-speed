@@ -181,6 +181,9 @@ namespace DynamicWalkSpeeds.Debugging
             try { DWSDebugActions.DumpSpeedTable(); Pass("csv.dump", "speed table written"); }
             catch (Exception e) { Fail("csv.dump", e.Message); }
 
+            try { DWSDebugActions.DumpReferenceTables(); Pass("csv.reference", "weather, terrain, snow and filth tables written"); }
+            catch (Exception e) { Fail("csv.reference", e.Message); }
+
             try { DWSDebugActions.BenchmarkModifiers(); Pass("benchmark", "benchmark completed, see ns/call above"); }
             catch (Exception e) { Fail("benchmark", e.Message); }
 
@@ -243,7 +246,9 @@ namespace DynamicWalkSpeeds.Debugging
             var barefoot = new Dictionary<string, float>
             {
                 { "Soil", 1.00f }, { "Gravel", 0.88f }, { "Ice", 0.90f },
-                { "BrokenAsphalt", 0.92f }, { "Sandstone_Rough", 0.85f }, { "Concrete", 1.00f }
+                { "BrokenAsphalt", 0.92f }, { "Sandstone_Rough", 0.85f }, { "Concrete", 1.00f },
+                // Colour names collide with the terrain patterns; a carpet must never hurt.
+                { "CarpetBlueIce", 1.00f }, { "CarpetFineBlueIce", 1.00f }
             };
 
             foreach (KeyValuePair<string, float> kv in barefoot)
