@@ -3,7 +3,7 @@
   <name>Dynamic Walk Speeds</name>
   <author>archdukejim</author>
   <packageId>archdukejim.DynamicWalkSpeeds</packageId>
-  <modVersion>1.2.0</modVersion>
+  <modVersion>0.2.0</modVersion>
   <supportedVersions>
     <li>1.6</li>
   </supportedVersions>
@@ -82,31 +82,33 @@ Works with Vehicle Framework, and with Vanilla Vehicles Expanded on top of it. V
 
 Safe to add or remove mid save. Nothing is stored on your pawns or your map, so removing the mod puts every speed straight back to vanilla. Modded weather, modded floors, modded animals and modded apparel are all read from the game's own defs and need no compatibility patch.
 
+--- PLANNED FOR 1.0 ---
+Pathfinding preference. At the moment this mod changes how fast a pawn crosses a cell, not which cell it picks, so your colonists move quickly down a paved corridor but will still cut across the mud if that is the shorter line. The 1.0 release is meant to close that gap, so humanlike pawns route toward manufactured floors and packed dirt the way people naturally follow a path, while animals keep ignoring it and go where they please.
+
+That is a change to the pathfinding cost rather than the movement cost, which is a far hotter piece of the game, so it is being done deliberately and separately rather than rushed into this release.
+
 --- CHANGE LOG ---
-1.2
-  - Snow now scales the game's own movement penalty from 0 to 1000 percent rather than adding a second one of its own.
+0.2
+  - Creature traction: how much of a floor's bonus a creature can actually use, from full benefit down through indifference to an outright penalty. A guinea pig is measurably slower on concrete than on soil.
+  - Creatures grouped by body type and size band, read from race data rather than a species list, so modded animals classify themselves. 20 populated groups over 312 races with all DLCs loaded.
+  - Custom animal bodies from mods classify by their parts when the body name is unfamiliar.
+  - Any individual creature can override its group, for both traction and a flat speed multiplier.
+  - Barefoot terrain penalties: rough stone, gravel and ice punish a pawn with nothing on its feet, and boots take that away.
+  - Footwear traction: boots and shoes add a small grip bonus on manufactured floors, and their quality scales how much. Any body part group can be nominated as the traction slot, and every item occupying it gets its own value. Optional condition scaling, so worn out footwear grips less.
+  - Bare feet mood penalty, a stacking sore feet memory on painful ground, and a rare chance of a bruised or cut foot. Nudists exempt.
+  - Snow now scales the game's own movement penalty from 0 to 1000 percent rather than adding a second one of its own, which also covers sand in 1.6.
   - Filth is charged by the unit of thickness, 1 percent each at 100 percent, on the same 0 to 1000 percent scale.
   - Fleeing pawns drop the hostile territory penalty.
-  - Caching pass: terrain, weather and race values are memoised per def, worn footwear is scanned at most once a second per pawn, and the hostile pawn sweep is cached per map and faction instead of running for every cell entered.
-  - Barefoot terrain penalties: rough stone, gravel and ice punish a pawn with nothing on its feet, and boots take that away.
-  - Bare feet mood penalty, a stacking sore feet memory on painful ground, and a rare chance of a bruised or cut foot. Nudists exempt.
-  - Footwear traction: boots and shoes add a small grip bonus on manufactured floors, and their quality scales how much.
-  - Any body part group can be nominated as the traction slot, and every item occupying it gets its own value.
-  - Optional condition scaling, so worn out footwear grips less.
   - Vehicle Framework vehicles detected and given their own traction groups, banded by footprint.
-  - Custom animal bodies from mods now classify by their parts when the body name is unfamiliar.
+  - Performance pass: every value that depends only on a def is precomputed into flat lookup tables, worn footwear is scanned at most once a second per pawn, and the hostile pawn sweep is cached per map and faction instead of running for every cell entered. Measured at roughly 0.001 percent of the tick budget.
+  - Fixed: rough hewn natural rock was being treated as a built floor and given the manufactured bonus.
+  - Fixed: mechanoids were taking a barefoot penalty on rough ground.
 
-1.1
-  - Creature traction: how much of the floor bonus a creature can use, from full benefit down through indifference to an outright penalty.
-  - Creatures grouped by body type and size band, read from race data, so modded animals classify themselves.
-  - Flat per group speed multiplier for adjustments that should apply off the flooring too.
-  - Any individual creature can override its group.
-
-1.0
+0.1
   - Per weather speed multipliers, seeded from each weather's own rain and snow rate.
   - Per terrain speed multipliers, with manufactured ground faster than natural by default.
   - Master Floor Scale to move every floor at once.
-  - Snow slows by depth, filth slows by the pile.
+  - Snow and filth surface penalties.
   - Hostile territory penalty, triggered by enemy owned tiles, live enemies, or both.
   - Every modifier independently switchable, every value on a slider.</description>
 </ModMetaData>
