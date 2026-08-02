@@ -168,7 +168,7 @@ Linked, either one is enough. Unlink them and you choose exactly which counts, s
 
 [h2]Settings[/h2]
 
-Three tabs, everything live, nothing requiring a restart.
+Five tabs, everything live, nothing requiring a restart.
 
 [list]
 [*][b]Weather[/b] - a scrollable list of every weather in your game.
