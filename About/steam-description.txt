@@ -4,9 +4,30 @@ Workshop item 3775191933 - https://steamcommunity.com/sharedfiles/filedetails/?i
 Steam uses BBCode, not Markdown. Paste everything below the line into the
 Workshop item's description field.
 
-Upload About/Preview.png as the item's preview image. Workshop descriptions
-cannot reliably [img] an externally hosted file, so screenshots of the three
-settings tabs are worth adding as Workshop screenshots.
+Upload About/Preview.png as the item's preview image (the thumbnail). That is
+separate from the gallery screenshots.
+
+EMBEDDING IMAGES IN THE DESCRIPTION
+Workshop descriptions will not render an externally hosted image. GitHub raw
+links, imgur and the like are stripped. The URL has to be on Steam's own CDN,
+which means uploading the image to Steam first and then borrowing its address:
+
+  1. Steam Community -> your profile -> Artwork -> Upload Artwork.
+     Set visibility to Public, or the image 404s for everyone else.
+  2. Open the uploaded artwork, right click the full size image,
+     Copy image address. It will look like
+     https://images.steamusercontent.com/ugc/<numbers>/<hash>/
+  3. Put that in the description:  [img]<that url>[/img]
+
+Attaching images to the item itself (Add/Edit Images on the Workshop item) is
+the more reliable route: those always show in the item's gallery whether or not
+[img] renders, and their URLs work in [img] too. Screenshots of the Weather,
+Floors, Territory and Surface, Creatures and Footwear tabs are the ones worth
+having, plus one of a pawn crossing a terrain boundary.
+
+Other tags that work here: [previewyoutube=<id>;full][/previewyoutube] for video,
+[url=...]text[/url], [h1]..[h3], [list]/[*], [b][i][u][strike], [code],
+[quote], [spoiler], [hr][/hr].
 --------------------------------------------------------------------------------
 
 [h1]Dynamic Walk Speeds[/h1]
@@ -16,6 +37,8 @@ A colonist crossing a swept concrete corridor and a colonist wading through knee
 [h2]How it works[/h2]
 
 Four modifiers are read per cell and [b]multiplied together[/b], so a paved hallway in the rain is still faster than mud in the rain. Above [b]1.00x[/b] is faster than vanilla, below it is slower. Every value is a slider and every modifier can be switched off on its own.
+
+[b]➤ Want the actual numbers? [url=https://github.com/archdukejim/dynamic-walk-speed/wiki/Speed-Table]Read the Speed Table[/url][/b] — every creature on every floor, vanilla and modded ticks side by side, measured in game. It answers "does flooring my barn help or hurt my muffalo" in one table. (It hurts, by about 10%.)
 
 [list]
 [*][b]Weather[/b] - drizzle barely registers, a blizzard drags.
