@@ -194,6 +194,8 @@ That is a change to [i]pathfinding[/i] cost rather than [i]movement[/i] cost, an
 [*][b]Fixed:[/b] mechanoids were taking a barefoot penalty on rough ground.
 [/list]
 
+[b]Upgrading from 0.1:[/b] the snow and filth sliders keep their old names but no longer mean the same thing. Snow now scales the game's own penalty rather than adding a separate one, and filth is charged per unit of thickness rather than per pile. A value you set under 0.1 will behave differently, so give the Territory and Surface tab a look.
+
 [b]0.1[/b]
 [list]
 [*]Per weather speed multipliers, seeded from each weather's own rain and snow rate.

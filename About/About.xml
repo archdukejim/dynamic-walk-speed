@@ -103,6 +103,7 @@ That is a change to the pathfinding cost rather than the movement cost, which is
   - Performance pass: every value that depends only on a def is precomputed into flat lookup tables, worn footwear is scanned at most once a second per pawn, and the hostile pawn sweep is cached per map and faction instead of running for every cell entered. Measured at roughly 0.001 percent of the tick budget.
   - Fixed: rough hewn natural rock was being treated as a built floor and given the manufactured bonus.
   - Fixed: mechanoids were taking a barefoot penalty on rough ground.
+  - Note if you ran 0.1: the snow and filth sliders keep their old names but no longer mean the same thing. Snow now scales the game's own penalty and filth is charged per unit rather than per pile, so a value you set in 0.1 will behave differently. Worth a look at the Territory and Surface tab.
 
 0.1
   - Per weather speed multipliers, seeded from each weather's own rain and snow rate.
