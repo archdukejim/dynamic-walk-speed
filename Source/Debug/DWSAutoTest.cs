@@ -259,11 +259,33 @@ namespace DynamicWalkSpeeds.Debugging
                 float p = ApparelModifier.GetBarefootPenalty(t, s);
                 Check("barefoot." + kv.Key, Near(p, kv.Value), $"expected {kv.Value:F2}, got {p:F2}");
             }
+
+            // Softness is read from the build material: cloth soft, wood mid, stone/metal hard.
+            // Natural ground and no-costList built floors (smoothed stone) read hard.
+            var softness = new Dictionary<string, float>
+            {
+                { "Soil", 0.00f }, { "Gravel", 0.00f },
+                { "WoodPlankFloor", 0.50f }, { "TileSandstone", 0.10f },
+                { "MetalTile", 0.00f }, { "Concrete", 0.00f },
+                { "Sandstone_Smooth", 0.00f },
+                // Cloth carpet, colour "ice" and all: must read fully soft, not hard.
+                { "CarpetBlueIce", 1.00f }, { "CarpetFineBlueIce", 1.00f }
+            };
+
+            foreach (KeyValuePair<string, float> kv in softness)
+            {
+                TerrainDef t = DefDatabase<TerrainDef>.GetNamedSilentFail(kv.Key);
+                if (t == null) { Fail("softness." + kv.Key, "def not present"); continue; }
+
+                float soft = FloorModifier.GetSoftness(t);
+                Check("softness." + kv.Key, Near(soft, kv.Value), $"expected {kv.Value:F2}, got {soft:F2}");
+            }
         }
 
         private static void PredictedCrossValues(DynamicWalkSpeedsSettings s)
         {
-            // The headline prediction: a guinea pig is slower on concrete than on soil.
+            // The headline prediction: a guinea pig is slower on concrete than on soil, and
+            // 0.3.0's inversion -- faster on carpet, where a large animal is unchanged.
             var cases = new[]
             {
                 new { Race = "GuineaPig", Terrain = "Concrete", Expected = 0.8875f },
@@ -271,7 +293,12 @@ namespace DynamicWalkSpeeds.Debugging
                 new { Race = "Muffalo", Terrain = "Concrete", Expected = 0.9100f },
                 new { Race = "Mech_Centurion", Terrain = "Concrete", Expected = 1.1875f },
                 new { Race = "Megasloth", Terrain = "Concrete", Expected = 1.0375f },
-                new { Race = "GuineaPig", Terrain = "Soil", Expected = 1.0000f }
+                new { Race = "GuineaPig", Terrain = "Soil", Expected = 1.0000f },
+                // Soft floor: the guinea pig's hard-floor penalty flips to a bonus...
+                new { Race = "GuineaPig", Terrain = "CarpetBlueIce", Expected = 1.1125f },
+                // ...while the muffalo and the booted colonist do not notice the difference.
+                new { Race = "Muffalo", Terrain = "CarpetBlueIce", Expected = 0.9100f },
+                new { Race = "Human", Terrain = "CarpetBlueIce", Expected = 1.1500f }
             };
 
             foreach (var c in cases)
@@ -281,13 +308,15 @@ namespace DynamicWalkSpeeds.Debugging
                 if (race == null || terrain == null) { Fail($"cross.{c.Race}.{c.Terrain}", "def not present"); continue; }
 
                 float floor = FloorModifier.GetFloorMultiplier(terrain, s);
-                float traction = CreatureModifier.GetTraction(race, s);
+                float soft = FloorModifier.GetSoftness(terrain);
+                float traction = CreatureModifier.GetTraction(race, s) + CreatureModifier.GetSoftResponse(race, s) * soft;
+                traction = UnityEngine.Mathf.Clamp(traction, CreatureModifier.MinTraction, CreatureModifier.MaxTraction);
                 float eff = FloorModifier.IsManufactured(terrain) && floor != 1f
                     ? 1f + (floor - 1f) * traction
                     : floor;
 
                 Check($"cross.{c.Race}.{c.Terrain}", Near(eff, c.Expected),
-                    $"effective floor expected {c.Expected:F4}, got {eff:F4} (traction {traction:F2})");
+                    $"effective floor expected {c.Expected:F4}, got {eff:F4} (traction {traction:F2}, softness {soft:F2})");
             }
         }
 
@@ -331,7 +360,8 @@ namespace DynamicWalkSpeeds.Debugging
 
                 if (!Near(row.floorMult, FloorModifier.ResolveFloorMultiplier(t, s)) ||
                     row.manufactured != FloorModifier.ResolveManufactured(t) ||
-                    !Near(row.barefootPenalty, ApparelModifier.ResolveBarefootPenalty(t, s)))
+                    !Near(row.barefootPenalty, ApparelModifier.ResolveBarefootPenalty(t, s)) ||
+                    !Near(row.softness, FloorModifier.ResolveSoftness(t)))
                 {
                     badTerrains++;
                     if (badTerrains <= 5) Log.Warning($"[SYNAPSE-TEST] terrain table mismatch on {t.defName}");
@@ -356,7 +386,8 @@ namespace DynamicWalkSpeeds.Debugging
                 checkedRaces++;
 
                 if (!Near(row.traction, CreatureModifier.GetTraction(d, s)) ||
-                    !Near(row.speed, CreatureModifier.GetSpeed(d, s)))
+                    !Near(row.speed, CreatureModifier.GetSpeed(d, s)) ||
+                    !Near(row.softResponse, CreatureModifier.GetSoftResponse(d, s)))
                 {
                     badRaces++;
                     if (badRaces <= 5) Log.Warning($"[SYNAPSE-TEST] race table mismatch on {d.defName}");

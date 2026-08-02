@@ -27,6 +27,9 @@ namespace DynamicWalkSpeeds.Debugging
 
             "StrawMatting",
             "WoodPlankFloor",
+            // A carpet (cloth) is the soft built floor 0.3.0 turns on. The colour is a
+            // deliberate callback: "ice" in the defName must not make it read hard.
+            "CarpetBlueIce",
             "Concrete",
             "PavedTile",
             "TileSandstone",

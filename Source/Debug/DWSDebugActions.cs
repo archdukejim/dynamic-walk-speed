@@ -28,7 +28,7 @@ namespace DynamicWalkSpeeds.Debugging
             List<ThingDef> races = DWSTestSubjects.ResolveRaces(missing);
 
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("race,group,terrain,manufactured,floorMult,tractionFloor,creatureSpeed,barefoot,totalMult,baseTicks,moddedTicks,ratio");
+            sb.AppendLine("race,group,terrain,manufactured,softness,floorMult,tractionFloor,creatureSpeed,barefoot,totalMult,baseTicks,moddedTicks,ratio");
 
             for (int r = 0; r < races.Count; r++)
             {
@@ -58,6 +58,7 @@ namespace DynamicWalkSpeeds.Debugging
                         group,
                         terrain.defName,
                         FloorModifier.IsManufactured(terrain) ? "yes" : "no",
+                        FloorModifier.GetSoftness(terrain).ToString("F2"),
                         floorMult.ToString("F3"),
                         tractionFloor.ToString("F3"),
                         creatureSpeed.ToString("F3"),
@@ -115,7 +116,7 @@ namespace DynamicWalkSpeeds.Debugging
 
             // ---- terrain ----
             StringBuilder t = new StringBuilder();
-            t.AppendLine("defName,label,manufactured,floorMult,barefootPenalty,vanillaPathCost,costList");
+            t.AppendLine("defName,label,manufactured,softness,floorMult,barefootPenalty,vanillaPathCost,costList");
             List<TerrainDef> terrains = DefDatabase<TerrainDef>.AllDefsListForReading;
             for (int i = 0; i < terrains.Count; i++)
             {
@@ -134,6 +135,7 @@ namespace DynamicWalkSpeeds.Debugging
                     d.defName,
                     Quote(d.LabelCap),
                     FloorModifier.IsManufactured(d) ? "yes" : "no",
+                    FloorModifier.ResolveSoftness(d).ToString("F2"),
                     FloorModifier.GetFloorMultiplier(d, settings).ToString("F3"),
                     ApparelModifier.ResolveBarefootPenalty(d, settings).ToString("F2"),
                     d.pathCost.ToString(),

@@ -52,11 +52,12 @@ namespace DynamicWalkSpeeds.Settings
             if (!settings.enableCreatureModifiers) return;
 
             listing.Label("Traction: 1.00x gives the full floor bonus, 0.00x ignores floors, negative turns the bonus into a penalty.");
+            listing.Label("Soft-floor response: how much traction improves on soft flooring (carpet) versus hard (tile). Small clawed animals grip carpet; boots and hooves do not care.");
             listing.CheckboxLabeled("Show individual creature overrides", ref showOverrides);
             listing.Gap(6f);
 
             float rowH = 32f;
-            float groupBlock = 26f + rowH + rowH + 10f;
+            float groupBlock = 26f + rowH + rowH + rowH + 10f;
             float viewH = populatedGroups.Count * groupBlock;
             if (showOverrides)
             {
@@ -98,6 +99,14 @@ namespace DynamicWalkSpeeds.Settings
                 }
                 settings.creatureSpeed[key] = scroll.SliderLabeled($"    Speed ({speed:F2}x)", speed,
                     CreatureModifier.MinSpeed, CreatureModifier.MaxSpeed);
+
+                if (!settings.creatureSoftResponse.TryGetValue(key, out float softResponse))
+                {
+                    softResponse = CreatureModifier.GetDefaultSoftResponse(key);
+                    settings.creatureSoftResponse[key] = softResponse;
+                }
+                settings.creatureSoftResponse[key] = scroll.SliderLabeled($"    Soft-floor response ({softResponse:+0.00;-0.00;0.00})", softResponse,
+                    CreatureModifier.MinSoftResponse, CreatureModifier.MaxSoftResponse);
 
                 scroll.Gap(10f);
             }

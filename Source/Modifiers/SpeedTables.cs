@@ -10,12 +10,14 @@ namespace DynamicWalkSpeeds.Modifiers
             public float floorMult;
             public float barefootPenalty;
             public bool manufactured;
+            public float softness;
         }
 
         public struct RaceRow
         {
             public float traction;
             public float speed;
+            public float softResponse;
         }
 
         private static TerrainRow[] terrainRows;
@@ -49,6 +51,7 @@ namespace DynamicWalkSpeeds.Modifiers
                 terrainRows[k].manufactured = FloorModifier.ResolveManufactured(t);
                 terrainRows[k].floorMult = FloorModifier.ResolveFloorMultiplier(t, settings);
                 terrainRows[k].barefootPenalty = ApparelModifier.ResolveBarefootPenalty(t, settings);
+                terrainRows[k].softness = FloorModifier.ResolveSoftness(t);
             }
 
             List<WeatherDef> weathers = DefDatabase<WeatherDef>.AllDefsListForReading;
@@ -72,6 +75,7 @@ namespace DynamicWalkSpeeds.Modifiers
 
                 raceRows[k].traction = CreatureModifier.GetTraction(d, settings);
                 raceRows[k].speed = CreatureModifier.GetSpeed(d, settings);
+                raceRows[k].softResponse = CreatureModifier.GetSoftResponse(d, settings);
             }
         }
 

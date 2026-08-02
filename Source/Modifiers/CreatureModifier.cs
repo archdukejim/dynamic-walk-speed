@@ -10,6 +10,8 @@ namespace DynamicWalkSpeeds.Modifiers
         public const float MaxTraction = 1.50f;
         public const float MinSpeed = 0.25f;
         public const float MaxSpeed = 2.00f;
+        public const float MinSoftResponse = -1.00f;
+        public const float MaxSoftResponse = 2.00f;
 
         public static readonly string[] BodyTypes =
         {
@@ -21,11 +23,13 @@ namespace DynamicWalkSpeeds.Modifiers
         private static readonly Dictionary<ThingDef, string> groupCache = new Dictionary<ThingDef, string>();
         private static readonly Dictionary<ThingDef, float> tractionCache = new Dictionary<ThingDef, float>();
         private static readonly Dictionary<ThingDef, float> speedCache = new Dictionary<ThingDef, float>();
+        private static readonly Dictionary<ThingDef, float> softResponseCache = new Dictionary<ThingDef, float>();
 
         public static void InvalidateSettingsCache()
         {
             tractionCache.Clear();
             speedCache.Clear();
+            softResponseCache.Clear();
         }
 
         private static float GetTractionCached(ThingDef def, DynamicWalkSpeedsSettings settings)
@@ -55,6 +59,21 @@ namespace DynamicWalkSpeeds.Modifiers
 
             float result = GetSpeed(def, settings);
             speedCache[def] = result;
+            return result;
+        }
+
+        private static float GetSoftResponseCached(ThingDef def, DynamicWalkSpeedsSettings settings)
+        {
+            if (def == null) return 0.00f;
+
+            if (SpeedTables.TryRace(def, out SpeedTables.RaceRow row))
+                return row.softResponse;
+
+            if (softResponseCache.TryGetValue(def, out float cached))
+                return cached;
+
+            float result = GetSoftResponse(def, settings);
+            softResponseCache[def] = result;
             return result;
         }
 
@@ -198,6 +217,30 @@ namespace DynamicWalkSpeeds.Modifiers
             return 1.00f;
         }
 
+        // How much a group's traction improves per unit of floor softness. Small clawed
+        // animals do well on carpet (nails find purchase in the pile), so a big positive
+        // response turns their hard-floor penalty into a soft-floor bonus; large animals
+        // barely notice, and boots/treads/hooves are indifferent (0). Seeds for tuning.
+        public static float GetDefaultSoftResponse(string groupKey)
+        {
+            switch (groupKey)
+            {
+                case "Padded_Small": return 1.50f;
+                case "Padded_Medium": return 0.60f;
+                case "Padded_Large": return 0.10f;
+
+                case "Taloned_Small": return 1.30f;
+                case "Taloned_Medium": return 0.70f;
+                case "Taloned_Large": return 0.30f;
+
+                case "Serpentine_Small":
+                case "Serpentine_Medium":
+                case "Serpentine_Large": return 0.40f;
+
+                default: return 0.00f;
+            }
+        }
+
         public static float GetTraction(ThingDef def, DynamicWalkSpeedsSettings settings)
         {
             if (def == null) return 1.00f;
@@ -230,6 +273,19 @@ namespace DynamicWalkSpeeds.Modifiers
             return GetDefaultSpeed(key);
         }
 
+        public static float GetSoftResponse(ThingDef def, DynamicWalkSpeedsSettings settings)
+        {
+            if (def == null) return 0.00f;
+
+            string key = GetGroupKey(def);
+            if (key == null) return 0.00f;
+
+            if (settings.creatureSoftResponse.TryGetValue(key, out float group))
+                return group;
+
+            return GetDefaultSoftResponse(key);
+        }
+
         public static float ApplyTraction(Pawn pawn, TerrainDef terrain, float floorMult, DynamicWalkSpeedsSettings settings)
         {
             if (pawn == null || !settings.enableCreatureModifiers || floorMult == 1.0f)
@@ -238,7 +294,9 @@ namespace DynamicWalkSpeeds.Modifiers
             if (!FloorModifier.IsManufactured(terrain))
                 return floorMult;
 
-            float traction = GetTractionCached(pawn.def, settings) + ApparelModifier.GetFootwearTraction(pawn, settings);
+            float traction = GetTractionCached(pawn.def, settings)
+                             + GetSoftResponseCached(pawn.def, settings) * FloorModifier.GetSoftness(terrain)
+                             + ApparelModifier.GetFootwearTraction(pawn, settings);
             traction = UnityEngine.Mathf.Clamp(traction, MinTraction, MaxTraction);
             return 1.0f + (floorMult - 1.0f) * traction;
         }

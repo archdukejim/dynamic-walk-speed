@@ -4,7 +4,7 @@ A RimWorld 1.6 mod. The ground your pawns walk on decides how fast they cross it
 
 [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3775191933) · MIT licensed
 
-**Current release: 0.2**
+**Current release: 0.3.0**
 
 ## What it does
 
@@ -14,8 +14,11 @@ every modifier can be switched off on its own.
 
 - **Weather** — per weather multiplier, seeded from each weather's own rain and snow rate.
 - **Floors** — per terrain multiplier. Manufactured ground starts at `1.15x`, natural at `1.00x`.
-- **Creature traction** — how much of the floor bonus a creature can actually use.
-  A guinea pig on concrete comes out at `0.89x`: paving actively hurts it.
+- **Creature traction** — how much of the floor bonus a creature can actually use, and
+  now *which* floor. A guinea pig on concrete comes out at `0.89x` — paving hurts it —
+  but on carpet the same animal reads `1.11x`, because softness is read from the floor's
+  build material (cloth soft, wood middling, stone and steel hard). Large animals and
+  booted colonists don't notice the difference.
 - **Snow and filth** — scales the game's own snow penalty from 0% to 1000%; filth is
   charged by the unit of thickness.
 - **Hostile territory** — slower on enemy ground, unless the pawn is fleeing.

@@ -3,7 +3,7 @@
   <name>Dynamic Walk Speeds</name>
   <author>archdukejim</author>
   <packageId>archdukejim.DynamicWalkSpeeds</packageId>
-  <modVersion>0.2.0</modVersion>
+  <modVersion>0.3.0</modVersion>
   <supportedVersions>
     <li>1.6</li>
   </supportedVersions>
@@ -32,6 +32,8 @@ Traction decides how much of the floor bonus a creature can actually use. At 1.0
 Creatures are grouped by the game's own data rather than by a hand written species list, on two axes at once. Body type comes from the race's body: Hoofed, Padded, Taloned, Insectoid, Shelled, Serpentine, Mechanoid, Vehicle, Humanlike, Other. Size band comes from base body size: Small under 0.5, Medium under 1.5, Large above. That is 20 populated groups over 312 races with the base game and all DLCs loaded, measured in game rather than guessed, and it is what separates a 0.2 guinea pig from a 4.0 bear when the game calls both of them paws.
 
 Hooves slip on smooth flooring and slip harder the heavier the animal. Small padded animals fare worst of all, since claws that are built to dig into soil find nothing to bite on tile. Mechanoids do better on flat manufactured ground than on broken earth. Humanlike pawns are wearing boots and take the full bonus.
+
+And the floor's material matters, not only that it was built. How soft a floor is underfoot is read from what it was made of, cloth soft, wood middling, stone and steel hard, so the same small clawed animal that gets nothing from tile finds purchase in a carpet and comes out ahead on it, while a heavy animal or a booted colonist crosses that carpet no differently than tile. Each group has a Soft-floor response slider that sets how much soft flooring helps it, and modded floors are read the same way with no patch.
 
 Every group also has a flat speed multiplier from 0.25x to 2.00x that applies everywhere, not only on flooring, for when you want a species faster or slower across the board.
 
@@ -96,6 +98,11 @@ Pathfinding preference. At the moment this mod changes how fast a pawn crosses a
 That is a change to the pathfinding cost rather than the movement cost, which is a far hotter piece of the game, so it is being done deliberately and separately rather than rushed into this release.
 
 --- CHANGE LOG ---
+0.3.0
+  - Floors now differ by what they are made of, not only by whether they were built. Softness is read from a floor's build material through the game's own data, so cloth carpet is soft, wood is middling, and stone and steel are hard, and modded floors classify themselves with no patch.
+  - Creature traction responds to that softness. A small clawed animal that gets nothing from smooth tile does well on carpet, where its claws find purchase: a guinea pig reads about 1.11x on carpet against 0.89x on concrete. Large animals, hooves and booted colonists do not notice the difference. Each creature group gets a Soft-floor response slider to tune it.
+  - Fixed: buildable fertile terrain such as Vanilla Furniture Expanded's lawns was treated as a built floor, so grass took the manufactured speed bonus and charged animals a traction penalty. Growable ground now always behaves like the soil it is, whatever mod adds it.
+
 0.2
   - Creature traction: how much of a floor's bonus a creature can actually use, from full benefit down through indifference to an outright penalty. A guinea pig is measurably slower on concrete than on soil.
   - Creatures grouped by body type and size band, read from race data rather than a species list, so modded animals classify themselves. 20 populated groups over 312 races with all DLCs loaded.
